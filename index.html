@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0" />
+    <title></title>
+    <!--preload-links-->
+    <!--app-context-->
+	<style type="text/css">
+	/* 在引入的css文件中写入这个*/
+		[v-cloak]{
+			display: none;
+		}
+	</style>	
+  </head>
+  <body>
+    <div id="app"><!--app-html--></div>
+    <script type="module" src="/main.js"></script>
+	<script>
+		document.addEventListener( "plusready", function(){
+		  var pinf = plus.push.getClientInfo();  
+		  var cid = pinf.clientid;//客户端标识
+		  console.log(cid) // app的CID
+		  message = document.getElementById("message");
+		    // 监听点击消息事件
+		    plus.push.addEventListener( "click", function( msg ) {
+		      console.log(msg)                     
+		    }, false );
+		    // 监听在线消息事件
+		    plus.push.addEventListener( "receive", function( msg ) {
+		       console.log(msg)
+		   }, false );
+		}, false );
+	</script>
+<script type="text/javascript">
+	document.addEventListener('touchmove', function (evt) {
+		evt.preventDefault()
+	}, { passive: false })
+		
+	</script>
+
+  </body>
+</html>

@@ -1,0 +1,10 @@
+{
+  "dependencies": {
+    "createjs": "^1.0.1",
+    "createjs-cmd": "^0.1.0",
+    "createjs-npm": "^0.2.0",
+    "script-loader": "^0.7.2",
+    "uview-ui": "^2.0.31",
+    "yuki-createjs": "^0.0.3"
+  }
+}
