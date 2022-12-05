@@ -9,16 +9,16 @@
 
 				<view class="make-area">
 
-					<template v-for="(item, index) in photowall">
-						<view @touchstart="handleTouchstart($event, index)" @touchmove="handleTouchmove" @touchend="handleTouchend" @click="selectrow(index, item.img)" class="make-cell cell-one"
-							:style="[{ left: item.left + 'rpx', top: item.top + 'rpx', width: item.width + 'rpx', height: item.height + 'rpx','z-index':item.zindex }]">
-							<u-icon v-if="!item.img" name="photo" color="#FFFFFF" size="40"></u-icon>
-							<img v-if="item.img" :src="item.img" alt=""
-								:style="[{ 'transform-origin': item.centerx + 'rpx ' + item.centery + 'rpx 0', 'transform': 'scale(' + item.scale + ') rotate(' + item.rotate + 'deg) translateX(' + item.tranx + 'rpx) translateY(' + item.trany + 'rpx)' }]">
-						</view>
-					</template>
+
+					<view v-for="(item, index) in photowall" :key="'b'+String(index)" @touchstart="handleTouchstart($event, index)" @touchmove="handleTouchmove" @touchend="handleTouchend" @click="selectrow(index, item.img)" class="make-cell cell-one" :style="[{ left: item.left + 'rpx', top: item.top + 'rpx', width: item.width + 'rpx', height: item.height + 'rpx','z-index':item.zindex }]">
+						<u-icon v-if="!item.img" name="photo" color="#FFFFFF" size="40"></u-icon>
+						<img v-if="item.img" :src="item.img" alt=""
+							:style="[{ 'transform-origin': item.centerx + 'rpx ' + item.centery + 'rpx 0', 'transform': 'scale(' + item.scale + ') rotate(' + item.rotate + 'deg) translateX(' + item.tranx + 'rpx) translateY(' + item.trany + 'rpx)' }]">
+					</view>
+		
 
 					<view class="make-text" v-for="(item, index) in alltext"
+					:key="'a'+String(index)"
 					:style="[{ left: item.left + 'rpx', top: item.top + 'rpx','z-index':item.zindex,'font-size':item.size+'rpx',color:item.color,'font-family':item.family,transform:'rotate('+item.rotate+'deg)'}]"
 					:class="{'make-text-action':item.isactive}" @touchstart="textTouchstart($event, index)" @touchmove="textTouchmove" @touchend="textTouchend"
 					@click="selecttextcon(index)"
@@ -26,7 +26,16 @@
 					>
 						{{item.text}}
 					</view>
+					
 
+					<img class="make-source" v-for="(item, index) in allsource"
+					:key="'c'+String(index)"
+					:style="[{ left: item.left + 'rpx', top: item.top + 'rpx','z-index':item.zindex,'width':item.width+'rpx','height':item.height+'rpx',transform:'rotate('+item.rotate+'deg)'}]"
+					:class="{'make-source-action':item.isactive}" @touchstart="imgTouchstart($event, index)" @touchmove="imgTouchmove" @touchend="imgTouchend"
+					@click="selectimgcon(index)"
+					:id="'cc'+String(index)"
+					:src="item.img"
+					>
 
 				</view>
 			</view>
@@ -62,7 +71,7 @@
 		</view>
 
 		<view v-if="isexport" class="startmake">
-			<img class="exportstyle" :src="exportsrc" alt="">
+			<img @click="preview()" class="exportstyle" :src="exportsrc" alt="">
 		
 
 			<view class="make-submit">
@@ -82,22 +91,28 @@
 		</view>
 
 		<view class="img-panel" @click="cancelselec" v-if="isaction"
-			:style="[{ left: panelleft + 'rpx', top: paneltop + 'rpx', width: panelwidth + 'rpx', height: panelheight + 'rpx' }]">
+			:style="[{ left: panelleft + 'rpx', top: paneltop + 'rpx', width: panelwidth + 'rpx', height: panelheight + 'rpx',border:panborder }]">
 
-			<view class="img-panel-right" :styly="{ top: panelctop + 'rpx' }">
+			<view class="img-panel-right" :style="{ top: panelctop + 'rpx'}">
 				<text class="img-close" @click.stop="delbox">删除</text>
 				<text class="img-scale" @click.stop="bigbox">放大</text>
 				<text class="img-scales" @click.stop="clickbox">缩小</text>
-				<text class="img-rotates" @click.stop="rightrotate">右旋</text>
 				<text class="img-rotatesleft" @click.stop="leftrotate">左旋</text>
+				<text class="img-rotates" @click.stop="rightrotate">右旋</text>
+				
 
+				<template v-if="isphotowall">
 				<text class="img-movetop" @click.stop="topmove">上移</text>
 				<text class="img-movebottom" @click.stop="bottommove">下移</text>
 				<text class="img-moveleft" @click.stop="leftmove">左移</text>
 				<text class="img-moveright" @click.stop="rightmove">右移</text>
+				</template>
 			</view>
 
 		</view>
+
+
+
 
 
 		<view class="text-edit" v-if="istext">
@@ -117,6 +132,76 @@
 					<view class="confirmstyle" @click="confirminput">确定</view>	
 				</view>
 			</view>
+		</view>
+
+		<view class="font-param-set" v-if="isfedit">
+
+			<view class="font-settab">
+				<view class="font-setcolor" @click="switchfont(1)" :class="{'font-active':selectset == 1}">
+					<text>字体/颜色</text>
+				</view>
+				<view class="font-setcon" @click="switchfont(2)" :class="{'font-active':selectset == 2}">
+					<text>文字编辑</text>
+				</view>
+				<view class="font-setrotate" @click="switchfont(3)" :class="{'font-active':selectset == 3}">
+					<text>大小/旋转</text>
+				</view>
+			</view>
+
+
+			<view class="font-color-family" v-if="(selectset == 1)">
+				
+	
+				<scroll-view scroll-x="true" 
+				show-scrollbar="true"
+				class="pos_signer" 
+				>
+					<view class="scroll-view-item" v-for="(item,index) in familays" @click="selectfontset(1,item)" :key="index">{{item}}</view>
+
+				</scroll-view>
+				
+			
+
+				<scroll-view scroll-x="true" 
+				show-scrollbar="true"
+				class="pos_signers" 
+				>
+					<view class="scroll-view-items" 
+					v-for="(item,index) in colors" 
+					@click="selectfontset(2,item)" 
+					:style="{'background':item}"
+					:key="index"></view>
+
+				</scroll-view>
+
+
+				
+			</view>
+
+
+			<view class="font-color-family" v-if="(selectset == 3)">
+
+				<scroll-view scroll-x="true" 
+				show-scrollbar="true"
+				class="pos_signer" 
+				>
+					
+				<view class="scroll-view-item" @click="selectfontset(3)">放大</view>
+				<view class="scroll-view-item" @click="selectfontset(4)">缩小</view>
+				<view class="scroll-view-item" @click="selectfontset(5)">左旋</view>
+				<view class="scroll-view-item" @click="selectfontset(6)">右旋</view>
+				<view class="scroll-view-item" @click="selectfontset(7)">左移</view>
+				<view class="scroll-view-item" @click="selectfontset(8)">右移</view>
+				<view class="scroll-view-item" @click="selectfontset(9)">上移</view>
+				<view class="scroll-view-item" @click="selectfontset(10)">下移</view>
+				
+				</scroll-view>
+			</view>
+
+
+			<view class="setting-close" @click="closefontset">
+				<u-icon name="close" color="#85839b" size="40"></u-icon></view>
+
 		</view>
 
 		<u-loading-page loading-text="正在制作中..." :loading="loadings"></u-loading-page>
@@ -150,9 +235,16 @@ export default {
 			panelwidth: 0,
 			panelheight: 0,
 			panelctop: 0,
+			panborder:"2px dashed red",
+			paneltype:1,
 			centerx: 0,
 			centery: 0,
 			phones:"",
+			selectset:1,
+			isfedit:false,
+			currfontindex:"",
+			familays:['思源黑体','童话体简','童话体简','童话体简','童话体简','童话体简','童话体简'],
+			colors:['#7f284b','#4e172c','#fea002','#fd8c02','#fffd06','#d2ff02','#ff5fcb','#fe798e','#000000','#FFFFFF'],
 			photowall: [{
 				id: 1,
 				left: 93,
@@ -418,6 +510,7 @@ export default {
 			canvaswidth: 750,
 			canvasheight: 974,
 			actionbox: "",
+			isphotowall:true,
 			// 下面都是照片拖拽的变量
 			currdropbox: "",
 			soleft:0,
@@ -441,7 +534,18 @@ export default {
 			tsoleft:0,
 			tsotop:0,
 			currdroptextbox:"",
-			boxinfo:{}
+			boxinfo:{},
+			// 添加素材的变量
+			allsource:[],
+			currimgindex:"",
+			istartx: 0,
+			istarty: 0,
+			iisstart:false,
+			isoleft:0,
+			isotop:0,
+			itendx:0,
+			itendy:0,
+			boximginfo:{}
 		}
 	},
 	onLoad() {
@@ -451,6 +555,187 @@ export default {
 
 	},
 	methods: {
+		preview(){
+
+			uni.previewImage
+			({
+
+				urls: [this.exportsrc], 
+				current: '',
+				success: function(res) {},
+
+				fail: function(res) {},
+
+				complete: function(res) {},
+
+			})
+		},
+		imgTouchstart(event, index) {
+			event.stopPropagation()
+
+			// console.log(event);
+			// console.log("开始拖拽")
+			this.currimgindex = index;
+			this.getimgDescBox("cc"+String(this.currimgindex));
+			
+			const { clientX, clientY } = event.touches[0];
+			// console.log(event.touches[0]);
+			// 记录一些数据
+			this.istartx = clientX
+			this.istarty = clientY
+			this.iisstart = true;
+
+			this.isoleft = this.allsource[index].left;
+			this.isotop = this.allsource[index].top;
+			this.allsource[index].zindex =99999;
+
+			event.preventDefault();
+		},
+		imgTouchmove(event){
+
+			// console.log(event);
+			event.stopPropagation()
+			// 文字拖拽
+			if (this.iisstart) {
+
+				const { clientX, clientY } = event.touches[0];
+				this.itendx=clientX;
+				this.itendy=clientY;
+
+				let tendleft = this.isoleft + ((clientX - this.istartx)/(uni.upx2px(100)/100))
+				let tendtop = this.isotop + ((clientY - this.istarty)/(uni.upx2px(100)/100))
+
+				let twidth=this.boximginfo.width/(uni.upx2px(100)/100)
+				let theight=this.boximginfo.height/(uni.upx2px(100)/100)
+		
+				// 橫向围栏
+				// 左边围栏
+				if(tendleft <= 61+20){
+					tendleft=61+20;
+				}
+				
+				// 右边围栏
+				if(twidth+61+20+tendleft > this.canvaswidth){
+					tendleft=this.canvaswidth-twidth-61-20;
+				}
+
+				// 纵向围栏
+				// 上边围栏
+				if(tendtop <= 61+20){
+					tendtop=61+20;
+				}
+				// 下边围栏
+				if(theight+61+20+tendtop > this.canvasheight){
+					tendtop=this.canvasheight-theight-61-20;
+				}
+
+				this.allsource[this.currimgindex].left = tendleft
+				this.allsource[this.currimgindex].top = tendtop
+			
+				// this.panelleft = tendleft;
+				// this.paneltop = tendtop;
+			}
+			event.preventDefault();
+		},
+		paramreset(){
+			this.isaction=false;
+			this.istext=false;
+			for(let i=0;i<this.alltext.length;i++){
+				this.alltext[i].isactive=false;
+			}
+			for(let i=0;i<this.allsource.length;i++){
+				this.allsource[i].isactive=false;
+			}
+			this.currfontindex="";
+			this.currimgindex="";
+
+		},
+		otherreset(){
+			this.isaction=false;
+			for(let i=0;i<this.allsource.length;i++){
+				this.allsource[i].isactive=false;
+			}
+			this.currimgindex="";
+
+		},
+		imgTouchend(){
+
+			// 如果只是点击了一下，啥都不干
+			if(this.istartx == this.itendx && this.istarty == this.itendy){
+			
+				this.istartx=0;
+				this.istarty=0;
+				this.iisstart = false;
+				this.isoleft = 0;
+				this.isotop = 0;
+				this.itendx = 0;
+				this.currdroptextbox = "";
+				this.itendy = 0;
+				this.boximginfo={};
+				return;
+			}
+
+		},
+		switchfont(type){
+			this.selectset=type;
+
+			if( type== 2){
+				this.istext=true;
+				this.textcon=this.alltext[this.currfontindex].text
+
+			}else{
+				this.istext=false;
+				this.textcon=""
+	
+			}
+
+		},
+		closefontset(){
+			// 关闭字体设置
+			this.isfedit=false;
+			this.alltext[this.currfontindex].isactive=false;
+			this.currfontindex="";
+		},
+		selectfontset(type,val=""){
+			// 字体设置方法
+			if(type == 1){
+				// 字体，手机上不支持pc的常用字体
+				this.alltext[this.currfontindex].family=val;
+				this.$set(this.alltext[this.currfontindex],'family',val);
+
+			}
+			if(type == 2){
+				// 颜色
+				this.alltext[this.currfontindex].color=val;
+				this.$set(this.alltext[this.currfontindex],'color',val);
+			}
+			if(type == 3){
+				this.alltext[this.currfontindex].size=this.alltext[this.currfontindex].size+1;
+			}
+			if(type == 4){
+				this.alltext[this.currfontindex].size=this.alltext[this.currfontindex].size-1;
+			}
+			if(type == 5){
+				this.alltext[this.currfontindex].rotate=this.alltext[this.currfontindex].rotate-5;
+			}
+			if(type == 6){
+				this.alltext[this.currfontindex].rotate=this.alltext[this.currfontindex].rotate+5;
+			}
+			if(type == 7){
+				this.alltext[this.currfontindex].left=this.alltext[this.currfontindex].left-5;
+			}
+			if(type == 8){
+				this.alltext[this.currfontindex].left=this.alltext[this.currfontindex].left+5;
+			}
+			if(type == 9){
+				this.alltext[this.currfontindex].top=this.alltext[this.currfontindex].top-5;
+			}
+			if(type == 10){
+				this.alltext[this.currfontindex].top=this.alltext[this.currfontindex].top+5;
+			}
+			this.$forceUpdate();//强制更新
+
+		},
 		getDescBox(id) {
 			uni.createSelectorQuery().in(this).select('#'+id).boundingClientRect(result => {
 				if (result) {
@@ -460,11 +745,20 @@ export default {
 				}
 			}).exec();
 		},
+		getimgDescBox(id) {
+			uni.createSelectorQuery().in(this).select('#'+id).boundingClientRect(result => {
+				if (result) {
+					this.boximginfo=result;
+				}else {
+					this.getimgDescBox();
+				}
+			}).exec();
+		},
 		textTouchstart(event, index) {
 			event.stopPropagation()
 
 			// console.log(event);
-			console.log("开始拖拽")
+			// console.log("开始拖拽")
 			this.currdroptextbox = index;
 			this.getDescBox("aa"+String(this.currdroptextbox));
 			
@@ -483,7 +777,7 @@ export default {
 		},
 		textTouchmove(event){
 
-			console.log(event);
+			// console.log(event);
 			event.stopPropagation()
 			// 文字拖拽
 			if (this.tisstart) {
@@ -689,35 +983,68 @@ export default {
 
 		},
 		delbox() {
-			// 删除盒子里的图片
 			this.isaction = false;
-			this.photowall[this.actionbox].img = false;
-			this.photowall[this.actionbox].twidth = 0;
-			this.photowall[this.actionbox].theight = 0;
-			this.photowall[this.actionbox].scale = 1;
-			this.photowall[this.actionbox].rotate = 0;
-			this.photowall[this.actionbox].tranx = 0;
-			this.photowall[this.actionbox].trany = 0;
-			this.photowall[this.actionbox].centerx = 0;
-			this.photowall[this.actionbox].centery = 0;
-			this.actionbox = "";
-		},
-		bigbox() {
-			// 放大盒子
-			this.photowall[this.actionbox].scale = this.photowall[this.actionbox].scale + 0.2;
+			if(this.paneltype == 1){
+				// 删除盒子里的图片
+				this.photowall[this.actionbox].img = false;
+				this.photowall[this.actionbox].twidth = 0;
+				this.photowall[this.actionbox].theight = 0;
+				this.photowall[this.actionbox].scale = 1;
+				this.photowall[this.actionbox].rotate = 0;
+				this.photowall[this.actionbox].tranx = 0;
+				this.photowall[this.actionbox].trany = 0;
+				this.photowall[this.actionbox].centerx = 0;
+				this.photowall[this.actionbox].centery = 0;
+				this.actionbox = "";
+			}
+			if(this.paneltype == 2){
+				// 删除素材
+				this.allsource.splice(this.currimgindex,1)
+				this.currimgindex="";
+			}
 
 		},
+		bigbox() {
+			if(this.paneltype == 1){
+				// 放大盒子
+				this.photowall[this.actionbox].scale = this.photowall[this.actionbox].scale + 0.2;
+
+			}
+			if(this.paneltype == 2){
+				this.allsource[this.currimgindex].width=this.allsource[this.currimgindex].width+10;
+				this.allsource[this.currimgindex].height=this.allsource[this.currimgindex].height+10;
+			}
+		},
 		clickbox() {
-			// 放大盒子
-			this.photowall[this.actionbox].scale = this.photowall[this.actionbox].scale - 0.2;
+			// 缩小盒子
+			if(this.paneltype == 1){
+				this.photowall[this.actionbox].scale = this.photowall[this.actionbox].scale - 0.2;
+			}
+			if(this.paneltype == 2){
+				this.allsource[this.currimgindex].width=this.allsource[this.currimgindex].width-10;
+				this.allsource[this.currimgindex].height=this.allsource[this.currimgindex].height-10;
+			}
 		},
 		rightrotate() {
 			// 右旋
-			this.photowall[this.actionbox].rotate = this.photowall[this.actionbox].rotate + 10;
+			if(this.paneltype == 1){
+				this.photowall[this.actionbox].rotate = this.photowall[this.actionbox].rotate + 10;
+			}
+			
+			if(this.paneltype == 2){
+				this.allsource[this.currimgindex].rotate=this.allsource[this.currimgindex].rotate+10;
+				
+			}
 		},
 		leftrotate() {
 			// 右旋
-			this.photowall[this.actionbox].rotate = this.photowall[this.actionbox].rotate - 10;
+			if(this.paneltype == 1){
+				this.photowall[this.actionbox].rotate = this.photowall[this.actionbox].rotate - 10;
+			}
+			if(this.paneltype == 2){
+				this.allsource[this.currimgindex].rotate=this.allsource[this.currimgindex].rotate-10;
+				
+			}	
 		},
 		topmove() {
 			// 上移动
@@ -747,39 +1074,103 @@ export default {
 		},
 		cancelinput(){
 			this.istext=false;
+			this.selectset=1;
 			this.textcon="";
 		},
 		confirminput(){
+			
 			this.istext=false;
 			let textobj={
 				text:this.textcon,
 				left:61+30,
 				top:61+30,
 				rotate:0,
-				family:"微软雅黑",
+				family:"PingFang SC, PingFang SC-Bold",
 				color:"#000000",
 				size:40,
 				zindex:1,
 				isactive:false
 			}
-			this.alltext.push(textobj);
+			if(this.selectset == 2){
+				this.alltext[this.currfontindex].text=this.textcon
+				this.selectset=1;
+			}else{
+				this.alltext.push(textobj);
+			}
+			
 			this.textcon="";
+
 		},
 		selecttextcon(index){
+
+			// 先将所有设置为默认状态
+			for(let i=0;i<this.alltext.length;i++){
+				this.alltext[i].isactive=false;
+			}
+
 			this.alltext[index].isactive=!this.alltext[index].isactive;
+			this.selectset=1;
+			if(this.alltext[index].isactive){
+
+				this.otherreset();
+				this.isaction=false;
+				this.isfedit=true;
+				this.currfontindex=index;
+
+			}else{
+				this.isfedit=false;
+				this.currfontindex="";
+			}
+			
+		},
+		selectimgcon(index){
+
+			// 先将所有设置为默认状态
+			for(let i=0;i<this.allsource.length;i++){
+				this.allsource[i].isactive=false;
+			}
+
+			this.allsource[index].isactive=!this.allsource[index].isactive;
+
+			if(this.allsource[index].isactive){
+
+				this.currimgindex=index;
+				this.isaction = true;
+				this.isphotowall=false;
+				this.panelleft = this.allsource[index].left;
+				this.paneltop = this.allsource[index].top;
+				this.panelwidth = this.allsource[index].width;
+				this.panelheight = this.allsource[index].height;
+				this.panelctop = -150;
+				this.paneltype=2;
+				this.panborder="none"
+			}else{
+	
+				this.isaction = false;
+				this.currimgindex="";
+
+			}
+			
 		},
 		selectrow(index, img) {
 
 			if (img) {
-				
+					for(let i=0;i<this.alltext.length;i++){
+						this.alltext[i].isactive=false;
+					}
+					for(let i=0;i<this.allsource.length;i++){
+						this.allsource[i].isactive=false;
+					}
 					this.isaction = true;
+					this.isphotowall=true;
 					this.panelleft = this.photowall[index].left;
 					this.paneltop = this.photowall[index].top;
 					this.panelwidth = this.photowall[index].width;
 					this.panelheight = this.photowall[index].height;
-					this.panelctop = 300 - this.photowall[index].height;
+					this.panelctop = -343;
+					this.paneltype=1;
 					this.actionbox = index;//当前选中的活动盒子
-				
+					this.panborder="2px dashed red"
 
 			} else {
 
@@ -790,65 +1181,12 @@ export default {
 		},
 		cancelselec(){
 			this.isaction = false;
-
-		},
-		// 文本换行处理，并返回实际文字所占据的高度
-		textEllipsis(ctx, text, x, y, maxWidth=44, lineHeight=20, row=0) {
-			if (typeof text != 'string' || typeof x != 'number' || typeof y != 'number') {
-				return;
-			}
-			// var canvas = context.canvas;
-
-			// if (typeof maxWidth == 'undefined') {
-			// 	maxWidth = canvas && canvas.width || 300;
-			// }
-
-			// if (typeof lineHeight == 'undefined') {
-			// 	// 有些情况取值结果是字符串，比如 normal。所以要判断一下
-			// 	var getLineHeight = window.getComputedStyle(canvas).lineHeight;
-			// 	var reg=/^[0-9]+.?[0-9]*$/;
-			// 	lineHeight = reg.test(getLineHeight)? getLineHeight:20;
-			// }
-
-			// 字符分隔为数组
-			var arrText = text.split('');
-			// 文字最终占据的高度，放置在文字下面的内容排版，可能会根据这个来确定位置
-			var textHeight = 0;
-			// 每行显示的文字
-			var showText = '';
-			// 控制行数
-			var limitRow = row;
-			var rowCount = 0;
-
-			for (var n = 0; n < arrText.length; n++) {
-				var singleText = arrText[n];
-				var connectShowText = showText + singleText;
-				// 没有传控制的行数，那就一直换行
-				var isLimitRow = limitRow ? rowCount === (limitRow - 1) : false;
-				var measureText = isLimitRow ? (connectShowText+'……') : connectShowText;
-				var metrics = ctx.measureText(measureText);
-				var textWidth = metrics.width;
-
-				if (textWidth > maxWidth && n > 0 && rowCount !== limitRow) {
-					var canvasShowText = isLimitRow ? measureText:showText;
-					ctx.fillText(canvasShowText, x, y);
-					showText = singleText;
-					y += lineHeight;
-					textHeight += lineHeight;
-					rowCount++;
-					if (isLimitRow) {
-						break;
-					}
-				} else {
-					showText = connectShowText;
-				}
-			}
-			if (rowCount !== limitRow) {
-				context.fillText(showText, x, y);
+			// 先将所有设置为默认状态
+			for(let i=0;i<this.allsource.length;i++){
+				this.allsource[i].isactive=false;
 			}
 
-			var textHeightValue = rowCount < limitRow ? (textHeight + lineHeight): textHeight;
-			return textHeightValue;
+			
 		},
 		exportImg() {
 
@@ -856,7 +1194,7 @@ export default {
 			var ctx = uni.createCanvasContext('myCanvas', this);
 			// 1.填充背景色，白色
 			ctx.setFillStyle('#fFFFff'); // 默认白色
-			ctx.fillRect(0, 0, 750, 974)
+			ctx.fillRect(0, 0, this.canvaswidth, this.canvasheight)
 			ctx.save();
 
 			// 绘制每个矩形
@@ -899,38 +1237,71 @@ export default {
 			}
 
 			// 绘制每个文字
-			for (let i = 0; i < this.alltext.length; i++) {
+			for (let a = 0; a < this.alltext.length; a++) {
 
-				ctx.font=uni.upx2px(this.alltext[i].size)+"px "+this.alltext[i].family
-				ctx.fillStyle=this.alltext[i].color
+				ctx.font=uni.upx2px(this.alltext[a].size)+"px "+this.alltext[a].family
+				ctx.fillStyle=this.alltext[a].color
+
 				// 原生canvas没有多行文字的支持，这里判断换行符\n来进行换行,后续还需优化行高的设置等等
-				uni.createSelectorQuery().in(this).select('#aa'+i).boundingClientRect(result => {
-					if (result) {
-						let textArr = this.alltext[i].text.split('')
-						let text="";
-						let row=1;
-						let alltexts=[];
-						for(let i=0;i<textArr.length;i++){
-							text +=textArr[i];
-							if(textArr[i] == '\n'){
-								row++;
-								alltexts.push(text);
-								text="";
-								continue;
-							}
-							if(i == textArr.length-1){
-								alltexts.push(text);
-								text="";
-							}
-						}
-						let rowheight=result.height/row
-						for(let j=0;j<alltexts.length;j++){
-							ctx.fillText(alltexts[j],uni.upx2px(this.alltext[i].left)+4,uni.upx2px(this.alltext[i].top)+(rowheight*(j+1))-4);
-						}
+				let textArr = this.alltext[a].text.split('')
+				let text="";
+				let row=1;
+				let alltexts=[];
+				for(let i=0;i<textArr.length;i++){
+					text +=textArr[i];
+					if(textArr[i] == '\n'){
+						row++;
+						alltexts.push(text);
+						text="";
+						continue;
 					}
-				}).exec();
-				ctx.rotate(this.alltext[i].rotate * Math.PI / 180)
+					if(i == textArr.length-1){
+						alltexts.push(text);
+						text="";
+					}
+				}
+				// let rowheight=result.height/row
+				let rowheight = uni.upx2px(this.alltext[a].size)
+				// 超过两行的高度，两段文字之间有间隔
+				if(row>1){
+					rowheight=rowheight+((row-1)*5)
+				}
+		
+				for(let j=0;j<alltexts.length;j++){
+
+					
+					ctx.translate(uni.upx2px(this.alltext[a].left),uni.upx2px(this.alltext[a].top));
+					ctx.rotate(this.alltext[a].rotate * Math.PI / 180)
+					ctx.translate(-uni.upx2px(this.alltext[a].left), -uni.upx2px(this.alltext[a].top));
+					
+					// ctx.fillText(alltexts[j],uni.upx2px(this.alltext[a].left)+4,uni.upx2px(this.alltext[a].top)-4)
+					ctx.fillText(alltexts[j],uni.upx2px(this.alltext[a].left),uni.upx2px(this.alltext[a].top)+(rowheight*(j+1)));
+					
+					ctx.translate(uni.upx2px(this.alltext[a].left),uni.upx2px(this.alltext[a].top));
+					ctx.rotate(-this.alltext[a].rotate * Math.PI / 180)
+					ctx.translate(-uni.upx2px(this.alltext[a].left), -uni.upx2px(this.alltext[a].top));
+
+				}
+				
+
 			}
+
+
+			// 绘制素材
+			for (let i = 0; i < this.allsource.length; i++) {
+
+				// 旋转
+				ctx.translate(uni.upx2px(this.allsource[i].left), uni.upx2px(this.allsource[i].top));
+				ctx.rotate(this.allsource[i].rotate * Math.PI / 180)
+				ctx.translate(-uni.upx2px(this.allsource[i].left) , -uni.upx2px(this.allsource[i].top));
+
+				ctx.drawImage(this.allsource[i].img,
+						uni.upx2px(this.allsource[i].left),
+						uni.upx2px(this.allsource[i].top),uni.upx2px(this.allsource[i].width),uni.upx2px(this.allsource[i].height))
+				
+			}
+
+
 			ctx.draw()
 
 			setTimeout(function () {
@@ -1023,16 +1394,10 @@ export default {
 		},
 		addtext() {
 
+			this.otherreset();
 			// 添加文字
 			this.istext=true;
 
-		},
-		addsource() {
-			wx.showToast({
-				icon: 'none',
-				title: "正在开发中！",
-			})
-			return;
 		},
 		exportswall() {
 			this.loadings=true;
@@ -1062,6 +1427,47 @@ export default {
 			} else {
 				return 1;
 			}
+		},
+		addsource() {
+			// 素材上传
+			var that = this;
+			this.isaction = false;
+			uni.chooseImage({
+				count:1, //默认1
+				sizeType: ['original', 'compressed'], //可以指定是原图还是压缩图，默认二者都有
+				sourceType: ['album'], //从相册选择
+				success: function (res) {
+					let uploadimg = res.tempFilePaths;
+
+					let textobj={
+						img:uploadimg[0],
+						left:61+30,
+						top:61+30,
+						rotate:0,
+						height:100,
+						width:0,
+						theight:0,
+						twidth:0,
+						zindex:1,
+						isactive:false
+					}
+					
+					uni.getImageInfo({
+						src: uploadimg[0],
+						success: function (image) {
+
+							textobj.theight=image.height;
+							textobj.twidth=image.width;
+							textobj.width=image.width/(image.height/100)
+							// 计算比例
+							// that.photowall[vaindex].scale = that.sizeauto(image.width, image.height, that.photowall[vaindex].width, that.photowall[vaindex].height);
+							that.allsource.push(textobj);
+						}
+					})
+
+				}
+			});
+
 		},
 		uploads(vaindex = "") {
 
@@ -1103,6 +1509,7 @@ export default {
 								}
 							}
 						}
+						
 
 					} else {
 						that.photowall[vaindex].img = uploadimg[0]
@@ -1118,7 +1525,7 @@ export default {
 						})
 
 					}
-
+					that.paramreset();
 					that.getImgstatu();
 				}
 			});
@@ -1185,7 +1592,17 @@ page {
 		.make-text-action{
 			border: 2px dashed red;
 		}
-
+		.make-source{
+			position: absolute;
+			overflow: hidden;
+			transition: all ease 0.02s;
+			border: 2px dashed #e3e1e5;
+    		transform-origin: 0 0 0;
+			box-sizing:border-box;
+		}
+		.make-source-action{
+			border: 2px dashed red;
+		}
 
 	}
 
@@ -1253,7 +1670,6 @@ page {
 }
 
 .img-panel {
-	border: 2px dashed red;
 	font-size: 35px;
 	position: absolute;
 	height: 100px;
@@ -1270,7 +1686,6 @@ page {
 		position: absolute;
 		top: -300rpx;
 		right: -80rpx;
-		height: 600rpx;
 		display: flex;
 		flex-direction: column;
 		justify-content: space-around;
@@ -1279,10 +1694,8 @@ page {
 		padding: 5px;
 		color: #FFF;
 		font-weight: bold;
-
-
 		text {
-			margin-bottom: 10rpx;
+			padding: 16rpx 0;
 		}
 	}
 }
@@ -1324,10 +1737,10 @@ page {
 		position:absolute;
 		top:0;
 		left:0;
-		z-index:9;
+		z-index:99999999;
 		width:100%;
 		height:100%;
-		background:rgba(0, 0, 0, 0.4)
+		background:rgba(0, 0, 0, 0.7)
 	}
 	.text-textarea{
 		display: flex;
@@ -1338,7 +1751,7 @@ page {
 		top:100rpx;
 		left:0;
 		width:100%;
-		z-index:19;
+		z-index:99999999999;
 		text-align:left;
 		color:#FFF;
 		textarea{
@@ -1373,4 +1786,101 @@ page {
 		}
 	}
 }
+
+
+.font-param-set{
+	position:fixed;
+	bottom:0;
+	width: 100%;
+	// height:500rpx;
+	background:#FFF;
+	z-index:99999999;
+	display: flex;
+	flex-direction: column;
+	justify-content:space-around;
+	align-items: flex-start;
+	padding:50rpx 0;
+	.font-settab{
+		width:100%;
+		display: flex;
+		flex-direction: row;
+		justify-content: flex-start;
+		align-items: center;
+		view{
+			width:200rpx;
+			height:100rpx;
+			display: flex;
+			flex-direction: row;
+			justify-content: center;
+			align-items: center;
+			font-size:34rpx;
+			color:#ababab;
+		}
+		.font-active{
+			color:#000;
+			font-weight:bold;
+		}
+	}
+	.font-color-family{
+		display: flex;
+		flex-direction: column;
+		justify-content: flex-start;
+		align-items: flex-start;
+		width:100%;
+
+
+		.pos_signer{
+			display: flex;
+			flex-direction: row;
+			justify-content: flex-start;
+			align-items: center;
+			flex-wrap:nowrap;
+			width:100%;
+			height:100rpx;
+			white-space: nowrap;
+			.scroll-view-item{
+				display:inline-block;
+				padding:40rpx;
+			}	
+		}
+
+		.pos_signers{
+			display: flex;
+			flex-direction: row;
+			justify-content: flex-start;
+			align-items: center;
+			flex-wrap:nowrap;
+			width:100%;
+			height:90rpx;
+			padding-left:50rpx;
+			white-space: nowrap;
+			.scroll-view-items{
+				width:60rpx;
+				height:60rpx;
+				border-radius:50%;
+				display:inline-block;
+				margin-right:60rpx;
+				margin-top:30rpx;
+			}	
+		}
+	}
+	.setting-close{
+		position: absolute;
+		top: -12px;
+		right: 60rpx;
+		z-index: 99999999999;
+		box-shadow: 0 0 5px rgb(140, 140, 140);
+		background: #FFF;
+		border-radius: 50%;
+		width: 50rpx;
+		height: 50rpx;
+		display: flex;
+		flex-direction: row;
+		justify-content: center;
+		align-items: center;
+
+	}
+}
+
+
 </style>

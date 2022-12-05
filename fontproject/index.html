@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <style>
+        
+    @font-face {font-family:'童话体简';
+        src:url('https://zaiercommon.oss-cn-beijing.aliyuncs.com/TengXiangTongHuaTiJian-2.ttf') format('truetype');
+    }
+    .main{
+        /* font-family:'童话体简'; */
+        width:200px;
+        height:200px;
+        border:1px solid red;
+        position:relative;
+        overflow:hidden;
+    }
+    .span{
+        display:inline-block;
+        transform-origin: 0 0 0;
+        transform:rotate(30deg);
+        position:absolute;
+        left:0;
+        top:0;
+        font-size:25px;
+        white-space: pre;
+    }
+
+    #canvas{
+        border:1px solid red;
+    }
+    </style>
+
+    <div class="main">
+        <span class="span">这个字体是沙发萨芬怎样的？</span>
+    </div>
+
+    <canvas id="canvas" width="200" height="200"></canvas>
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"></script>
+    <script>
+
+        let font_h=$(".span").height();
+        let tops=0;
+        let left=0
+        console.log(font_h);
+        let text='这个字体是沙发萨芬怎样的？'
+        let rotate= 35
+        let canvas = document.getElementById("canvas");
+        ctx = canvas.getContext("2d");
+        ctx.width=200;
+        ctx.height=200;
+        ctx.font="25px 童话体简"
+		ctx.fillStyle="#000000"
+
+        ctx.translate(left,tops);
+        ctx.rotate(rotate * Math.PI / 180)
+        ctx.translate(-left,-tops);
+
+        ctx.fillText(text,left,tops+font_h);
+		
+
+    </script>
+</body>
+</html>

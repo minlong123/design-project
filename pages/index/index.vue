@@ -22,7 +22,8 @@
 	<u-button @click="visits()">如何操作？</u-button>
 	</view>
 
-
+	<text class="preloadfont">字体文字测试</text>
+	<text class="preloadfonts">字体文字测试</text>
 	<view class="photo-wall">
 
 		<view class="photo-row" @click="makephoto">
@@ -180,6 +181,17 @@ page {
 			margin-top:20rpx;
 		}
 	}
+}
+
+.preloadfont{
+	font-family:'童话体简';
+	position:absolute;
+	top:0;
+}
+.preloadfonts{
+	font-family:'思源黑体';
+	position:absolute;
+	top:0;
 }
 
 </style>

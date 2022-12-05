@@ -7,13 +7,15 @@
 			"path": "pages/index/index",
 			"style": {
 				"navigationBarTitleText": "照片墙",
-				"navigationStyle": "custom"
+				"navigationStyle": "custom",
+				"enablePullDownRefresh":true
 			}
 		}, {
 			"path": "pages/banner/index",
 			"style": {
 				"navigationBarTitleText": "横幅",
-				"navigationStyle": "custom"
+				"navigationStyle": "custom",
+				"enablePullDownRefresh":true
 			}
 		}, {
 			"path": "pages/photo/index",
@@ -37,6 +39,11 @@
 			"path": "pages/make/index",
 			"style": {
 				"navigationBarTitleText": "照片墙制作"
+			}
+		},{
+			"path": "pages/bannmake/index",
+			"style": {
+				"navigationBarTitleText": "横幅制作"
 			}
 		}
     ],

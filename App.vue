@@ -118,6 +118,18 @@ export default {
 @import "uview-ui/index.scss";
 @import url("./static/fonts/iconfont.css");
 
+// 定义所有字体
+@font-face {font-family:'童话体简';
+    src:url('https://zaiercommon.oss-cn-beijing.aliyuncs.com/TengXiangTongHuaTiJian-2.ttf') format('truetype');
+}
+
+@font-face {font-family:'思源黑体';
+    src:url('https://zaiercommon.oss-cn-beijing.aliyuncs.com/HuaGuangGangTieZhiHei-KeBianTi-2.ttf') format('truetype');
+}
+
+
+
+
 body {
   font-family: PingFang SC, PingFang SC-Bold;
 }
