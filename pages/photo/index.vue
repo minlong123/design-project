@@ -334,7 +334,7 @@
 		  flex-direction:column;
 		  justify-content:center;
 		  align-items:center;
-		  background:#ececec;
+		  background:#f7f0f0;
 		
 		
 	  }
@@ -362,7 +362,7 @@
 	align-items:center;
   }
   .startmake{
-	width:725rpx;
+	width:80%;
 	margin:0 auto;
 	margin-top:200rpx;
 	text-align:center;

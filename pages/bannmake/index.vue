@@ -201,6 +201,11 @@
   page {
 	background-color: #FFFFFF;
   }
+  .Seals{
+	position:relative;
+	height:100%;
+	width:100%;
+  }
 
   .photo-wall{
 	  width:725rpx;
@@ -224,30 +229,31 @@
   .startmake{
 	margin-top:30rpx;
 	text-align:center;
+	z-index:1;
+	height:200rpx;
 	img{
 		width:80%;
 	}
 	.make-submit{
-		position:fixed;
-		bottom:0;
 		width:100%;
+		margin-top:200rpx;
 		background:#FFF;
-		box-shadow: 1px 5px 11px #000;
+		// box-shadow: 1px 5px 11px #000;
 		.contact{
 			width:80%;;
 			margin:0 auto;
 			margin-top:40rpx;
 		}
 		.subbbb{
-			width:100%;
+			width:80%;
+			margin:0 auto;
 			height:100rpx;
 			display: flex;
 			flex-direction: center;
 			justify-content: center;
 			align-items: center;
 			font-size:36rpx;
-			border-top-left-radius:10rpx;
-			border-top-right-radius:10rpx;
+			border-radius:10rpx;
 			background: linear-gradient(45deg, #fd7402 0%, #ff5001 100%);
 			color:#FFF;
 			margin-top:50rpx;
