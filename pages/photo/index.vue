@@ -1,24 +1,51 @@
 <template>
-	<view class="Seals">
+	<view class="photos-page">
 
 		<view class="selec-label">
 		选择照片
 		</view>
 
-
-		<view class="allphoto">
-
+		<view class="add-photo-box">
 			<view class="addphoto" @click="addphones">
 				<u-icon name="plus" color="#FFF" size="60"></u-icon>
 			</view>
-
-			<view class="img-row" v-for="(item,index) in allimg" @click="preview(index)" :key="index">
-				<img :src="item.img" alt=""
-			:style="[{ 'transform': 'scale(' + item.scale + ')','width':item.width+'rpx','height':item.height+'rpx'}]">
-			<view class="setting-close" @click.stop="closefontset(index)">
-				<u-icon name="close" color="#ff0000" size="40"></u-icon></view>
-		
 		</view>
+
+		<view class="allphoto" v-if="startupload">
+
+			<scroll-view scroll-x="true" 
+			show-scrollbar="true"
+			class="pos_signer" 
+			>
+
+				<view class="scroll-view-item" v-for="(item,index) in allimg" @click="preview(index)" :key="index">
+					
+					<u-image
+				ref="uImage"
+				:lazy-load="true"
+				:src="item.img"
+				mode="aspectFill"
+				height="150"
+				width="150"
+				shape="square"
+				>
+				<u-loading-icon size="20" slot="loading"></u-loading-icon>
+				</u-image>
+
+				<view class="setting-close" @click.stop="closefontset(index)">
+					<u-icon name="close" color="#ff0000" size="40"></u-icon>
+				</view>
+
+
+				</view>
+
+
+
+			</scroll-view>
+
+
+		
+	
 
 		</view>
 
@@ -39,6 +66,7 @@
 		<u-picker 
 	:show="sizeshow" 
 	:columns="columnsdata" 
+	itemHeight="80"
 	@confirm="confirmProcess"
 	@close="closeProcess"
 	@cancel="cancelProcess"
@@ -64,16 +92,18 @@
 		</view>
 
 
-
+		<view style="height:200rpx;"></view>
 	  <u-loading-page loading-text="正在加载中..." :loading="loading"></u-loading-page>
   
+
+
 	</view>
   </template>
   
   
   <script>
    import { IMG_URL } from "../../config/index";
-  
+   import { bodyScroll } from "@/util/validates.js";
   export default {
 	data() {
 	  return {
@@ -83,7 +113,8 @@
 		sizeshow:false,
 		columnsdata:[['1寸','2寸','3寸','4寸','5寸']],
 		photosize:"1寸",
-		phones:""
+		phones:"",
+		startupload:false,
 	  }
 	},
 	computed: {
@@ -97,8 +128,10 @@
 			}
 				
 		})
+		this.noPullDown();
 	},
 	onShow() {
+
 		uni.getStorage({
 			key:'design-contact',
 			success(res){
@@ -106,8 +139,10 @@
 			}
 				
 		})
+		this.noPullDown();
 	},
 	onLoad(){
+
 		uni.getStorage({
 			key:'design-contact',
 			success(res){
@@ -115,7 +150,7 @@
 			}
 				
 		})
-
+		this.noPullDown();
 
 	},
 	methods: {
@@ -136,6 +171,10 @@
 				complete: function(res) {},
 
 			})
+		},
+		noPullDown() {
+			//禁止页面拖动
+			document.querySelector('body').removeEventListener('touchmove',bodyScroll, { passive: false })
 		},
 		confirmProcess(e){
 			this.photosize=e.value[0]
@@ -247,15 +286,15 @@
 			sourceType: ['album'], //从相册选择
 			success: function (res) {
 				let uploadimg = res.tempFilePaths;
-
+				that.startupload=true;
 				// console.log(uploadimg);
 				for (let i = 0; i < uploadimg.length; i++) {
 					
 					// 获取图片的真实宽高
 					let allobj={
 						img:uploadimg[i],
-						width:200,
-						height:200,
+						width:150,
+						height:150,
 						theight:0,
 						twidth:0,
 						scale:1
@@ -266,7 +305,7 @@
 							// 计算比例
 							allobj.theight=image.width;
 							allobj.twidth=image.height;
-							that.allimg.push(allobj);
+							that.allimg.unshift(allobj);
 						}
 					})
 			
@@ -295,6 +334,8 @@
 	color:red;
 	font-weight:bold;
   }
+
+
   .sizeseting{
 	width:725rpx;
 	  margin:0 auto;
@@ -303,14 +344,13 @@
 		margin-top:20rpx;
 		border:none;
 		border-bottom:1px solid #ececec;
-		font-size:36rpx;
+		font-size:30rpx;
 		justify-content:flex-start;
 	  }
   }
   .allphoto{
 	  width:725rpx;
 	  margin:0 auto;
-		margin-top:50rpx;
 	  display:flex;
 	  flex-direction:row;
 	  justify-content:flex-start;
@@ -318,44 +358,93 @@
 	  flex-wrap:wrap;
 	  .img-row{
 		position:relative;
-		width:200rpx;
-		height:200rpx;
+		width:150rpx;
+		height:150rpx;
 		margin-right:30rpx;
 		margin-bottom:60rpx;
 		img{
 			max-width:100%;
 		}
 	  }
-	  .addphoto{
-		display:flex;
-		  width:200rpx;
-		  height:200rpx;
-		  margin-right:30rpx;
-		  flex-direction:column;
-		  justify-content:center;
-		  align-items:center;
-		  background:#f7f0f0;
-		
-		
-	  }
+
 	  .photo-row{
 		  margin-bottom:30rpx;
 		  display:flex;
-		  width:200rpx;
-		  height:200rpx;
+		  width:150rpx;
+		  height:150rpx;
 		  flex-direction:column;
 		  justify-content:space-around;
 		  align-items:center;
 
 	  }
   }
+  .add-photo-box{
+	width:100%;
+	display:flex;
+	flex-direction:column;
+	justify-content:center;
+	align-items:center;
+  }
+  .addphoto{
+	display:flex;
+	width:150rpx;
+	height:150rpx;
+	margin-right:30rpx;
+	flex-direction:column;
+	justify-content:center;
+	align-items:center;
+	background:#f7f0f0;
+	text-align:center;
+	
+	}
+
+  .pos_signer{
+		display: flex;
+		flex-direction: row;
+		justify-content: flex-start;
+		align-items: center;
+		flex-wrap:nowrap;
+		width:100%;
+		height:180rpx;
+		white-space: nowrap;
+		margin-top:20rpx;
+		
+		.scroll-view-item{
+			position:relative;
+			display:inline-block;
+			margin-right:40rpx;
+			top:40rpx;
+			.setting-close{
+				position: absolute;
+				top: -30rpx;
+				right: -30rpx;
+				z-index: 99999999999;
+				box-shadow: 0 0 5px rgb(140, 140, 140);
+				background: #FFF;
+				border-radius: 50%;
+				width: 50rpx;
+				height: 50rpx;
+				display: flex;
+				flex-direction: row;
+				justify-content: center;
+				align-items: center;
+
+			}
+
+		}	
+	}
+
+
+
+  
 
   .selec-label{
-	font-size:36rpx;
+	width:725rpx;
+	margin:0 auto;
+	font-size:32rpx;
 	margin-top:24rpx;
 	font-weight:bold;
 	height:80rpx;
-	width:200rpx;
 	display:flex;
 	flex-direction:row;
 	justify-content:center;
@@ -364,7 +453,7 @@
   .startmake{
 	width:80%;
 	margin:0 auto;
-	margin-top:200rpx;
+	margin-top:120rpx;
 	text-align:center;
 
 	.make-submit{
@@ -390,21 +479,6 @@
 		}
 	}
 }
-.setting-close{
-		position: absolute;
-		top: -30rpx;
-    	right: -30rpx;
-		z-index: 99999999999;
-		box-shadow: 0 0 5px rgb(140, 140, 140);
-		background: #FFF;
-		border-radius: 50%;
-		width: 50rpx;
-		height: 50rpx;
-		display: flex;
-		flex-direction: row;
-		justify-content: center;
-		align-items: center;
 
-	}
   </style>
   

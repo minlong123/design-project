@@ -120,21 +120,24 @@
     "vueVersion" : "2",
     "h5" : {
         "devServer" : {
-            "https" : false,
+            "https" : true,
             "port" : 8080,
             "proxy" : {
-                "/" : {
-                    "target" : "http://192.168.0.7:8080",
+                "/api" : {
+                    "target" : "https://design.ztu123.com",
                     "changeOrigin" : true,
                     "secure" : false,
-                    "pathRewrite" : {
-                        "^/" : ""
-                    }
+                    "logLevel" : "debug"
                 }
             }
         },
         "uniStatistics" : {
             "enable" : false
+        },
+        "title" : "设计师",
+        "router" : {
+            "mode" : "hash",
+            "base" : ""
         }
     },
     "mp-jd" : {

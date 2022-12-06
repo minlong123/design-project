@@ -22,15 +22,40 @@
 	<u-button @click="visits()">如何操作？</u-button>
 	</view>
 
-	<text class="preloadfont">字体文字测试</text>
-	<text class="preloadfonts">字体文字测试</text>
+	<text class="preloadfont">字</text>
+<text class="preloadfonts">字</text>
+<text class="preloadfont1">字</text>
+<text class="preloadfont2">字</text>
+<text class="preloadfont3">字</text>
+<text class="preloadfont5">字</text>
+<text class="preloadfont6">字</text>
+<text class="preloadfont7">字</text>
+<text class="preloadfont8">字</text>
+<text class="preloadfont9">字</text>
+<text class="preloadfont10">字</text>
+<text class="preloadfont11">字</text>
+<text class="preloadfont12">字</text>
+<text class="preloadfont13">字</text>
+<text class="preloadfont14">字</text>
+<text class="preloadfont15">字</text>
+<text class="preloadfont16">字</text>
+<text class="preloadfont17">字</text>
+<text class="preloadfont18">字</text>
+<text class="preloadfont19">字</text>
+<text class="preloadfont20">字</text>
+<text class="preloadfont21">字</text>
+<text class="preloadfont22">字</text>
+<text class="preloadfont23">字</text>
+<text class="preloadfont24">字</text>
+<text class="preloadfont25">字</text>
+<text class="preloadfont26">字</text>
 	<view class="photo-wall">
 
-		<view class="photo-row" @click="makephoto">
+		<view class="photo-row" @click="makephoto" v-for="(item,index) in datas" :key="index">
 				<u-image
 			ref="uImage"
 			:lazy-load="true"
-			:src="newimg"
+			:src="item.picimage"
 			mode="aspectFill"
 			height="210"
 			width="210"
@@ -38,53 +63,8 @@
 			>
 			<u-loading-icon size="20" slot="loading"></u-loading-icon>
 			</u-image>
-			<text>心形照片墙</text>
+			<text>{{item.name}}</text>
 		</view>
-<!-- 
-		<view class="photo-row">
-				<u-image
-			ref="uImage"
-			:lazy-load="true"
-			:src="newimg"
-			mode="aspectFill"
-			height="210"
-			width="210"
-			shape="square"
-			>
-			<u-loading-icon size="20" slot="loading"></u-loading-icon>
-			</u-image>
-			<text>心形照片墙</text>
-		</view>
-
-		<view class="photo-row">
-				<u-image
-			ref="uImage"
-			:lazy-load="true"
-			:src="newimg"
-			mode="aspectFill"
-			height="210"
-			width="210"
-			shape="square"
-			>
-			<u-loading-icon size="20" slot="loading"></u-loading-icon>
-			</u-image>
-			<text>心形照片墙</text>
-		</view>
-
-		<view class="photo-row">
-				<u-image
-			ref="uImage"
-			:lazy-load="true"
-			:src="newimg"
-			mode="aspectFill"
-			height="210"
-			width="210"
-			shape="square"
-			>
-			<u-loading-icon size="20" slot="loading"></u-loading-icon>
-			</u-image>
-			<text>心形照片墙</text>
-		</view> -->
 
 	</view>
 
@@ -96,12 +76,16 @@
 
 <script>
  import { DEV_URL } from "../../config/index";
+ import {getphototem } from "@/api/design/index"
+
+
 
 export default {
   data() {
     return {
       loading:false,
 	  newimg:DEV_URL+"/assets/design/loves.jpg",
+	  datas:[],
     }
   },
   computed: {
@@ -113,8 +97,20 @@ export default {
 	  
   },
   onLoad(){
+	this.getData();
   },
+  onPullDownRefresh: function () {
+	uni.stopPullDownRefresh()
+	},
   methods: {
+	getData(){
+		var that=this;
+		getphototem().then((res) => {
+			if(res.code == 1){
+				that.datas=res.data;
+			}
+		})
+	},
 	visits(){
         uni.navigateTo({
           url:"/pages/about/index"
@@ -193,5 +189,135 @@ page {
 	position:absolute;
 	top:0;
 }
+.preloadfont1{
+	font-family:'宋体';
+	position:absolute;
+	top:0;
+}
+.preloadfont2{
+	font-family:'幼圆体';
+	position:absolute;
+	top:0;
+}
+
+
+.preloadfont3{
+	font-family:'浮沉繁花';
+	position:absolute;
+	top:0;
+}
+.preloadfont5{
+	font-family:'花落寄相思';
+	position:absolute;
+	top:0;
+}
+.preloadfont6{
+	font-family:'华康金文体';
+	position:absolute;
+	top:0;
+}
+.preloadfont7{
+	font-family:'华康勘亭流';
+	position:absolute;
+	top:0;
+}
+.preloadfont8{
+	font-family:'华康俪金黑体简';
+	position:absolute;
+	top:0;
+}
+.preloadfont9{
+	font-family:'华康少女文字';
+	position:absolute;
+	top:0;
+}
+.preloadfont10{
+	font-family:'华康手札体';
+	position:absolute;
+	top:0;
+}
+.preloadfont11{
+	font-family:'华康宋体简';
+	position:absolute;
+	top:0;
+}
+.preloadfont12{
+	font-family:'华康娃娃体';
+	position:absolute;
+	top:0;
+}
+.preloadfont13{
+	font-family:'华康圆体';
+	position:absolute;
+	top:0;
+}
+.preloadfont14{
+	font-family:'蒙纳电脑体简';
+	position:absolute;
+	top:0;
+}
+.preloadfont15{
+	font-family:'庞门正道标题体';
+	position:absolute;
+	top:0;
+}
+.preloadfont16{
+	font-family:'晴圆等宽';
+	position:absolute;
+	top:0;
+}
+.preloadfont17{
+	font-family:'山涧流水';
+	position:absolute;
+	top:0;
+}
+.preloadfont18{
+	font-family:'苏新诗卵石体';
+	position:absolute;
+	top:0;
+}
+.preloadfont19{
+	font-family:'英雄黑体';
+	position:absolute;
+	top:0;
+}
+.preloadfont20{
+	font-family:'石头体';
+	position:absolute;
+	top:0;
+}
+.preloadfont21{
+	font-family:'空灵体';
+	position:absolute;
+	top:0;
+}
+.preloadfont22{
+	font-family:'萌趣露珠体';
+	position:absolute;
+	top:0;
+}
+.preloadfont23{
+	font-family:'七岁半';
+	position:absolute;
+	top:0;
+}
+.preloadfont24{
+	font-family:'萌趣芋圆体';
+	position:absolute;
+	top:0;
+}
+.preloadfont25{
+	font-family:'灵动布丁体';
+	position:absolute;
+	top:0;
+}
+.preloadfont26{
+	font-family:'纸飞机';
+	position:absolute;
+	top:0;
+}
+
+
+
 
 </style>

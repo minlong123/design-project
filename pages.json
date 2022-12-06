@@ -14,14 +14,12 @@
 			"path": "pages/banner/index",
 			"style": {
 				"navigationBarTitleText": "横幅",
-				"navigationStyle": "custom",
 				"enablePullDownRefresh":true
 			}
 		}, {
 			"path": "pages/photo/index",
 			"style": {
-				"navigationBarTitleText": "洗照片",
-				"enablePullDownRefresh":true
+				"navigationBarTitleText": "洗照片"
 			}
 		}, {
 			"path": "pages/about/index",

@@ -1,6 +1,9 @@
 <template>
 	<view class="make">
 
+		<u-loading-page loading-text="正在制作中..." :loading="loadings"></u-loading-page>
+
+
 		<view v-if="!isexport">
 
 			<view class="make-con">
@@ -65,14 +68,19 @@
 
 			</view>
 
-			<canvas canvas-id="myCanvas" id="canvass" width="750" height="974"
-				style="width:750rpx;height:974rpx;"></canvas>
+			<canvas canvas-id="myCanvas" id="canvass" :width="canvaswidth" :height="canvasheight"
+				:style="[{'width':canvaswidth+'rpx','height':canvasheight+'rpx'}]"></canvas>
+
+			<canvas canvas-id="bigcanvas" id="bcanvas" :width="bigwidth" :height="bigheight"
+			:style="[{'width':bigwidth+'rpx','height':bigheight+'rpx'}]"></canvas>
+
 
 		</view>
 
 		<view v-if="isexport" class="startmake">
 			<img @click="preview()" class="exportstyle" :src="exportsrc" alt="">
-		
+			
+			<view class="exportsizes">尺寸：{{bigwidth}}px*{{bigheight}}px</view>
 
 			<view class="make-submit">
 				
@@ -134,6 +142,64 @@
 			</view>
 		</view>
 
+
+
+		<view class="source-style-select" v-if="issedit">
+			<view class="font-settabs">
+
+				<scroll-view scroll-x="true" 
+				show-scrollbar="true"
+				class="pos_signer-source" 
+				>
+					<view class="scroll-view-item" 
+					v-for="(item,index) in allsourcate" 
+					@click="selectsourceset(index,item.id)" 
+					:class="{'source-active':selectsour == index}"
+					:key="index">{{item.name}}</view>
+
+				</scroll-view>
+			</view>
+
+			<view class="font-source-family">
+				
+				<scroll-view scroll-y="true"
+				show-scrollbar="true"
+				class="pos_signersa" 
+				>
+
+					<view class="scroll-view-itemsb">
+						
+						<view @click="addsourcein(index)" 
+						v-for="(item,index) in allsourceimg"
+						:key="'so'+String(index)"
+						>
+
+							<u-image
+						ref="uImage"
+						:lazy-load="true"
+						:src="item.img"
+						mode="aspectFill"
+						height="210"
+						width="210"
+						shape="square"
+						>
+						<u-loading-icon size="20" slot="loading"></u-loading-icon>
+						</u-image>
+						</view>
+							
+					</view>
+
+				</scroll-view>
+
+			</view>
+
+			<view class="setting-close" @click="closesourceset">
+				<u-icon name="close" color="#85839b" size="40"></u-icon></view>
+		</view>
+
+
+
+
 		<view class="font-param-set" v-if="isfedit">
 
 			<view class="font-settab">
@@ -145,6 +211,9 @@
 				</view>
 				<view class="font-setrotate" @click="switchfont(3)" :class="{'font-active':selectset == 3}">
 					<text>大小/旋转</text>
+				</view>
+				<view class="font-setrotate" @click="switchfont(4)" :class="{'font-active':selectset == 4}">
+					<text>删除</text>
 				</view>
 			</view>
 
@@ -204,9 +273,6 @@
 
 		</view>
 
-		<u-loading-page loading-text="正在制作中..." :loading="loadings"></u-loading-page>
-
-
 	</view>
 </template>
 
@@ -221,10 +287,15 @@
 
 import { DEV_URL } from "../../config/index";
 import changedpi from "@/util/changdpi.js"
+import { bodyScroll } from "@/util/validates.js";
+import { pathToBase64 } from "@/util/tobase.js";
+import { getphotoparam,getCateImgDetail } from "@/api/design/index"
+
 
 export default {
 	data() {
 		return {
+			issedit:false,
 			isexport: false,
 			exportsrc: "",
 			loadings:false,
@@ -243,7 +314,41 @@ export default {
 			selectset:1,
 			isfedit:false,
 			currfontindex:"",
-			familays:['思源黑体','童话体简','童话体简','童话体简','童话体简','童话体简','童话体简'],
+			selectsour:0,
+			newimg:DEV_URL+"/assets/design/loves.jpg",
+			allsourceimg:[{
+				'img':DEV_URL+"/assets/design/loves.jpg"
+			}],
+			allsourcate:['爱心','表情包','氛围点缀','父亲节','教师节','母亲节','气球'],
+			familays:[
+				'宋体',
+				'幼圆体',
+				'思源黑体',
+				'童话体简',
+				'浮沉繁花',
+				'花落寄相思',
+				'华康金文体',
+				'华康勘亭流',
+				'华康俪金黑体简',
+				'华康少女文字',
+				'华康手札体',
+				'华康宋体简',
+				'华康娃娃体',
+				'华康圆体',
+				'蒙纳电脑体简',
+				'庞门正道标题体',
+				'晴圆等宽',
+				'山涧流水',
+				'苏新诗卵石体',
+				'英雄黑体',
+				'石头体',
+				'空灵体',
+				'萌趣露珠体',
+				'七岁半',
+				'萌趣芋圆体',
+				'灵动布丁体',
+				'纸飞机',
+			],
 			colors:['#7f284b','#4e172c','#fea002','#fd8c02','#fffd06','#d2ff02','#ff5fcb','#fe798e','#000000','#FFFFFF'],
 			photowall: [{
 				id: 1,
@@ -509,6 +614,8 @@ export default {
 			canvas: "",
 			canvaswidth: 750,
 			canvasheight: 974,
+			bigwidth:3000,
+			bigheight:0,
 			actionbox: "",
 			isphotowall:true,
 			// 下面都是照片拖拽的变量
@@ -549,12 +656,67 @@ export default {
 		}
 	},
 	onLoad() {
-
+		this.noPullDown();
+		this.canvasinit();
+		this.getData();
 	},
 	mounted() {
-
+		this.noPullDown();
+		this.canvasinit();
 	},
+
 	methods: {
+		getData(){
+			var that=this;
+			getphotoparam().then((res) => {
+				if(res.code == 1){
+					that.colors=res.data['colors'];
+					that.allsourcate=res.data['catename']
+					that.allsourceimg=res.data['allimg'];
+				}
+			})
+		},
+		addsource(){
+			this.issedit=true;
+		},
+		addsourcein(index){
+			console.log(index);
+			let obj=this.allsourceimg[index].img;
+			let textobj={
+				img:obj,
+				left:61+30,
+				top:61+30,
+				rotate:0,
+				height:100,
+				width:0,
+				theight:0,
+				twidth:0,
+				zindex:1,
+				isactive:false
+			}
+			var that=this;
+			uni.getImageInfo({
+				src: obj,
+				success: function (image) {
+
+					textobj.theight=image.height;
+					textobj.twidth=image.width;
+					textobj.width=image.width/(image.height/100)
+					that.allsource.push(textobj);
+					that.issedit=false;
+				}
+			})
+
+		},
+		canvasinit(){
+			this.bigwidth=3000;
+			let lv=this.bigwidth/this.canvaswidth
+			this.bigheight=Math.ceil(this.canvasheight*lv);
+		},
+		noPullDown() {
+			//禁止页面拖动
+			document.querySelector('body').addEventListener('touchmove',bodyScroll, { passive: false })
+		},
 		preview(){
 
 			uni.previewImage
@@ -654,6 +816,7 @@ export default {
 			this.isaction=false;
 			for(let i=0;i<this.allsource.length;i++){
 				this.allsource[i].isactive=false;
+				this.allsource[i].zindex=1;
 			}
 			this.currimgindex="";
 
@@ -674,6 +837,15 @@ export default {
 				this.boximginfo={};
 				return;
 			}
+		},
+		selectsourceset(index,id){
+			this.selectsour=index;
+			var that=this;
+			getCateImgDetail({id:id}).then((res) => {
+				if(res.code == 1){
+					that.allsourceimg=res.data;
+				}
+			})
 
 		},
 		switchfont(type){
@@ -682,6 +854,15 @@ export default {
 			if( type== 2){
 				this.istext=true;
 				this.textcon=this.alltext[this.currfontindex].text
+
+			}else if(type== 4){
+				
+				this.alltext.splice(this.currfontindex,1)
+				this.currfontindex="";
+				this.istext=false;
+				this.textcon=""
+				this.isfedit=false;
+				this.selectset=1
 
 			}else{
 				this.istext=false;
@@ -695,6 +876,11 @@ export default {
 			this.isfedit=false;
 			this.alltext[this.currfontindex].isactive=false;
 			this.currfontindex="";
+		},
+		closesourceset(){
+			// 关闭素材的添加
+			this.issedit=false;
+			this.selectsour=0;
 		},
 		selectfontset(type,val=""){
 			// 字体设置方法
@@ -1116,6 +1302,7 @@ export default {
 				this.isaction=false;
 				this.isfedit=true;
 				this.currfontindex=index;
+				this.alltext[index].zindex =99999;
 
 			}else{
 				this.isfedit=false;
@@ -1144,6 +1331,7 @@ export default {
 				this.panelctop = -150;
 				this.paneltype=2;
 				this.panborder="none"
+
 			}else{
 	
 				this.isaction = false;
@@ -1187,6 +1375,167 @@ export default {
 			}
 
 			
+		},
+		exportBigImg() {
+			// 导出图片
+			let lv=this.bigwidth/this.canvaswidth
+			var that = this;
+			var ctx = uni.createCanvasContext('bigcanvas', this);
+			// 1.填充背景色，白色
+			ctx.setFillStyle('#fFFFff'); // 默认白色
+			ctx.fillRect(0, 0, this.bigwidth, this.bigheight)
+			ctx.save();
+
+			// 绘制每个矩形
+			for (let i = 0; i < this.photowall.length; i++) {
+
+				// 绘制图片
+				if (this.photowall[i].img) {
+
+					ctx.setFillStyle('#e3e1e5');
+					ctx.fillRect(uni.upx2px(this.photowall[i].left)*lv, uni.upx2px(this.photowall[i].top)*lv, uni.upx2px(this.photowall[i].width)*lv, uni.upx2px(this.photowall[i].height)*lv)
+
+					ctx.clip();
+					// let lvs = this.photowall[i].theight / this.photowall[i].height
+					let lvs = this.photowall[i].theight / this.photowall[i].height
+
+					// 平移
+					let transpeedx = this.photowall[i].tranx;
+					let transpeedy = this.photowall[i].trany;
+
+					// 旋转
+					ctx.translate(uni.upx2px(this.photowall[i].left*lv) + uni.upx2px(transpeedx*lv), uni.upx2px(this.photowall[i].top*lv) + uni.upx2px(transpeedy*lv));
+					ctx.rotate(this.photowall[i].rotate * Math.PI / 180)
+					ctx.translate(-(uni.upx2px(this.photowall[i].left*lv) + uni.upx2px(transpeedx*lv)), -(uni.upx2px(this.photowall[i].top*lv) + uni.upx2px(transpeedy*lv)));
+
+					ctx.drawImage(this.photowall[i].img,
+						uni.upx2px(this.photowall[i].left*lv + transpeedx*lv),
+						uni.upx2px(this.photowall[i].top*lv + transpeedy*lv),
+						uni.upx2px(this.photowall[i].twidth / lvs * this.photowall[i].scale*lv),
+						uni.upx2px(this.photowall[i].height) * this.photowall[i].scale*lv);
+					
+					ctx.restore()
+					ctx.save();
+					ctx.stroke()
+
+				} else {
+
+					ctx.setFillStyle('#e3e1e5');
+					ctx.fillRect(uni.upx2px(this.photowall[i].left)*lv, uni.upx2px(this.photowall[i].top)*lv, uni.upx2px(this.photowall[i].width)*lv, uni.upx2px(this.photowall[i].height)*lv)
+					ctx.stroke()
+				}
+			}
+
+			// 绘制每个文字
+			for (let a = 0; a < this.alltext.length; a++) {
+
+				ctx.font=uni.upx2px(this.alltext[a].size*lv)+"px "+this.alltext[a].family
+				ctx.fillStyle=this.alltext[a].color
+
+				// 原生canvas没有多行文字的支持，这里判断换行符\n来进行换行,后续还需优化行高的设置等等
+				let textArr = this.alltext[a].text.split('')
+				let text="";
+				let row=1;
+				let alltexts=[];
+				for(let i=0;i<textArr.length;i++){
+					text +=textArr[i];
+					if(textArr[i] == '\n'){
+						row++;
+						alltexts.push(text);
+						text="";
+						continue;
+					}
+					if(i == textArr.length-1){
+						alltexts.push(text);
+						text="";
+					}
+				}
+				// let rowheight=result.height/row
+				let rowheight = uni.upx2px(this.alltext[a].size)
+				// 超过两行的高度，两段文字之间有间隔
+				if(row>1){
+					rowheight=rowheight+((row-1)*5)
+				}
+		
+				for(let j=0;j<alltexts.length;j++){
+
+					
+					ctx.translate(uni.upx2px(this.alltext[a].left*lv),uni.upx2px(this.alltext[a].top*lv));
+					ctx.rotate(this.alltext[a].rotate * Math.PI / 180)
+					ctx.translate(-uni.upx2px(this.alltext[a].left*lv), -uni.upx2px(this.alltext[a].top*lv));
+					
+					// ctx.fillText(alltexts[j],uni.upx2px(this.alltext[a].left)+4,uni.upx2px(this.alltext[a].top)-4)
+					ctx.fillText(alltexts[j],uni.upx2px(this.alltext[a].left)*lv,uni.upx2px(this.alltext[a].top)*lv+(rowheight*(j+1))*lv);
+					
+					ctx.translate(uni.upx2px(this.alltext[a].left*lv),uni.upx2px(this.alltext[a].top*lv));
+					ctx.rotate(-this.alltext[a].rotate * Math.PI / 180)
+					ctx.translate(-uni.upx2px(this.alltext[a].left*lv), -uni.upx2px(this.alltext[a].top*lv));
+
+				}
+				
+
+			}
+
+
+			// 绘制素材
+			for (let i = 0; i < this.allsource.length; i++) {
+
+				// 旋转
+				ctx.translate(uni.upx2px(this.allsource[i].left*lv), uni.upx2px(this.allsource[i].top*lv));
+				ctx.rotate(this.allsource[i].rotate * Math.PI / 180)
+				ctx.translate(-uni.upx2px(this.allsource[i].left*lv) , -uni.upx2px(this.allsource[i].top*lv));
+
+				// 解决跨域问题
+				pathToBase64(this.allsource[i].img)
+				.then(base64 => {
+					ctx.drawImage(base64,
+					uni.upx2px(this.allsource[i].left*lv),
+					uni.upx2px(this.allsource[i].top*lv),uni.upx2px(this.allsource[i].width*lv),uni.upx2px(this.allsource[i].height*lv))
+	
+					ctx.draw()
+				})
+				.catch(error => {
+					console.error(error)
+				})			
+
+
+			}
+
+			if(this.allsource.length == 0){
+				ctx.draw()
+			}
+
+			
+
+			setTimeout(function () {
+
+				wx.canvasToTempFilePath({
+					canvasId: 'bigcanvas',
+					success: function (res) {
+
+						that.isexport = true;
+
+						uni.getStorage({
+							key:'design-contact',
+							success(res){
+								that.phones=parseInt(res.data);
+							}
+								
+						})
+
+						that.exportsrc = changedpi.changeDpiDataUrl(res.tempFilePath,that.dpi);
+						that.isaction = false;
+						that.loadings=false;
+
+					},
+					fail: function (res) {
+						that.loadings=false;
+						console.log(res);
+					}
+				});
+
+			},1000);
+
 		},
 		exportImg() {
 
@@ -1334,10 +1683,6 @@ export default {
 			that.loadings=false;
 
 		},
-		drawphoto() {
-			// 绘制小尺寸照片墙
-
-		},
 		varphone(phone){
 			if (!(/^1[34578]\d{9}$/.test(phone))) {
 				return false;
@@ -1401,7 +1746,8 @@ export default {
 		},
 		exportswall() {
 			this.loadings=true;
-			this.exportImg();
+			// this.exportImg();
+			this.exportBigImg();
 		},
 		getImgstatu() {
 			let statu = true;
@@ -1427,47 +1773,6 @@ export default {
 			} else {
 				return 1;
 			}
-		},
-		addsource() {
-			// 素材上传
-			var that = this;
-			this.isaction = false;
-			uni.chooseImage({
-				count:1, //默认1
-				sizeType: ['original', 'compressed'], //可以指定是原图还是压缩图，默认二者都有
-				sourceType: ['album'], //从相册选择
-				success: function (res) {
-					let uploadimg = res.tempFilePaths;
-
-					let textobj={
-						img:uploadimg[0],
-						left:61+30,
-						top:61+30,
-						rotate:0,
-						height:100,
-						width:0,
-						theight:0,
-						twidth:0,
-						zindex:1,
-						isactive:false
-					}
-					
-					uni.getImageInfo({
-						src: uploadimg[0],
-						success: function (image) {
-
-							textobj.theight=image.height;
-							textobj.twidth=image.width;
-							textobj.width=image.width/(image.height/100)
-							// 计算比例
-							// that.photowall[vaindex].scale = that.sizeauto(image.width, image.height, that.photowall[vaindex].width, that.photowall[vaindex].height);
-							that.allsource.push(textobj);
-						}
-					})
-
-				}
-			});
-
 		},
 		uploads(vaindex = "") {
 
@@ -1584,7 +1889,7 @@ page {
 		.make-text{
 			position: absolute;
 			overflow: hidden;
-			transition: all ease 0.02s;
+			transition: all ease 0.2s;
 			border: 2px dashed #e3e1e5;
 			white-space: pre;
     		transform-origin: 0 0 0;
@@ -1663,6 +1968,13 @@ page {
 	position: absolute;
 	left: 0;
 	top: 0;
+}
+#bcanvas{
+	opacity: 0;
+	z-index: -1;
+	position: absolute;
+	left: 0;
+	top: 0;	
 }
 
 .exportstyle {
@@ -1792,7 +2104,6 @@ page {
 	position:fixed;
 	bottom:0;
 	width: 100%;
-	// height:500rpx;
 	background:#FFF;
 	z-index:99999999;
 	display: flex;
@@ -1882,5 +2193,99 @@ page {
 	}
 }
 
+.source-style-select{
+	position:fixed;
+	bottom:0;
+	width: 100%;
+	background:#FFF;
+	z-index:99999999;
+	display: flex;
+	flex-direction: column;
+	justify-content:space-around;
+	align-items: flex-start;
+	padding:50rpx 0;
+	
+	.font-settabs{
+		width:100%;
+		display: flex;
+		flex-direction: row;
+		justify-content: flex-start;
+		align-items: center;
+		.pos_signer-source{
+			display: flex;
+			flex-direction: row;
+			justify-content: flex-start;
+			align-items: center;
+			flex-wrap:nowrap;
+			width:100%;
+			height:100rpx;
+			white-space: nowrap;
+			.scroll-view-item{
+				display:inline-block;
+				padding:40rpx;
+			}
+			.source-active{
+				color:#000;
+				font-weight:bold;
+			}
+		}
+	}
+	.font-source-family{
+		display: flex;
+		flex-direction: column;
+		justify-content: flex-start;
+		align-items: flex-start;
+		width:100%;
+		height:600rpx;
+		.pos_signersa{
+			display: flex;
+			flex-direction: row;
+			justify-content: flex-start;
+			align-items: center;
+			width:100%;
+			height:100%;
+			.scroll-view-itemsb{
+				display: flex;
+				flex-direction: row;
+				justify-content: flex-start;
+				align-items: center;
+				width:100%;
+				border-radius:50%;
+				margin:30rpx 0;
+    			flex-wrap: wrap;
+				padding: 0 30rpx;
+				view{
+					padding-right:14rpx;
+					display:inline-block;
+					padding-bottom: 14rpx;
+				}
+			}	
+		}
+	}
+	.setting-close{
+		position: absolute;
+		top: -12px;
+		right: 60rpx;
+		z-index: 99999999999;
+		box-shadow: 0 0 5px rgb(140, 140, 140);
+		background: #FFF;
+		border-radius: 50%;
+		width: 50rpx;
+		height: 50rpx;
+		display: flex;
+		flex-direction: row;
+		justify-content: center;
+		align-items: center;
+
+	}
+}
+
+.exportsizes{
+	width: 80%;
+    text-align: left;
+    margin: 0 auto;
+    color: #666666;
+    font-size: 28rpx;
+}
 
 </style>

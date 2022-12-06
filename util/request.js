@@ -54,8 +54,7 @@ const fetch = {
 	let requestUrl =   fetch.devUrl2 +  url;
 
     return new Promise((resolve, reject) => {
-      // console.log(requestUrl);
-      // console.log(params, "params");
+
       uni.request({
         url: requestUrl,
         data: params,
@@ -73,9 +72,11 @@ const fetch = {
           reject(res);
         },
         complete: (res) => {
-          // console.log(res, "res");
+          console.log(res, "res");
           switch (res.data.code) {
             case 200:
+              break;
+            case 1:
               break;
             case 204:
               break;
@@ -84,8 +85,8 @@ const fetch = {
               break;
             case 401:
               uni.setStorageSync("token", "");
-			  uni.removeStorageSync("userinfo");
-			  fetch.getTokens();
+              uni.removeStorageSync("userinfo");
+              fetch.getTokens();
               break;
             case 4003:
               fetch.toast("拒绝访问");

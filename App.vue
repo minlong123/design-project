@@ -1,112 +1,12 @@
 <script>
 export default {
-	// globalData: {//使用全局储存信息
-	// 	version: '',
-	// 	versionCode: ''
-	// },
+
   onLaunch: function () {
-	
-	uni.onPushMessage((res) => {
-		console.log("收到推送消息：",res) //监听推送消息
-	})
-	
-	
-
-	var btnArray = ["取消", "去设置"];
-	// #ifdef APP-PLUS  
-	if (plus.os.name == 'Android') { // 判断是Android
-		var main = plus.android.runtimeMainActivity();
-		var pkName = main.getPackageName();
-		var uid = main.getApplicationInfo().plusGetAttribute("uid");
-		var NotificationManagerCompat = plus.android.importClass(
-			"android.support.v4.app.NotificationManagerCompat");
-		var areNotificationsEnabled = NotificationManagerCompat.from(main).areNotificationsEnabled();
-		// 未开通‘允许通知’权限，则弹窗提醒开通，并点击确认后，跳转到系统设置页面进行设置  
-		if (!areNotificationsEnabled) {
-			uni.showModal({
-				title: '通知权限开启提醒',
-				content: '您还没有开启通知权限，无法接受到消息通知，是否前往设置？',
-				confirmText: '允许',
-				cancelText: '不允许',
-				success: () => {
-					var Intent = plus.android.importClass('android.content.Intent');
-					var Build = plus.android.importClass("android.os.Build");
-					//android 8.0引导  
-					if (Build.VERSION.SDK_INT >= 26) {
-						var intent = new Intent('android.settings.APP_NOTIFICATION_SETTINGS');
-						intent.putExtra('android.provider.extra.APP_PACKAGE', pkName);
-					} else if (Build.VERSION.SDK_INT >= 21) { //android 5.0-7.0  
-						var intent = new Intent('android.settings.APP_NOTIFICATION_SETTINGS');
-						intent.putExtra("app_package", pkName);
-						intent.putExtra("app_uid", uid);
-					} else { //(<21)其他--跳转到该应用管理的详情页  
-						intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
-						var uri = Uri.fromParts("package", mainActivity.getPackageName(), null);
-						intent.setData(uri);
-					}
-					// 跳转到该应用的系统通知设置页  
-					main.startActivity(intent);
-				}
-			})
-		}
-	} else if (plus.os.name == 'iOS') { // 判断是ISO
-		var isOn = undefined;
-		var types = 0;
-		var app = plus.ios.invoke('UIApplication', 'sharedApplication');
-		var settings = plus.ios.invoke(app, 'currentUserNotificationSettings');
-		if (settings) {
-			types = settings.plusGetAttribute('types');
-			plus.ios.deleteObject(settings);
-		} else {
-			types = plus.ios.invoke(app, 'enabledRemoteNotificationTypes');
-		}
-		plus.ios.deleteObject(app);
-		isOn = (0 != types);
-		if (isOn == false) {
-			uni.showModal({
-				title: '通知权限开启提醒',
-				content: '您还没有开启通知权限，无法接受到消息通知，是否前往设置？',
-				confirmText: '允许',
-				cancelText: '不允许',
-				success: () => {
-					var app = plus.ios.invoke('UIApplication', 'sharedApplication');
-					var setting = plus.ios.invoke('NSURL', 'URLWithString:', 'app-settings:');
-					plus.ios.invoke(app, 'openURL:', setting);
-					plus.ios.deleteObject(setting);
-					plus.ios.deleteObject(app);
-				}
-			})
-		}
-	}
-	// #endif  
-		
-
-	
-	
-	
-	
-	
-	
-	
   },
   onShow: function () {
-	  
-	//   plus.runtime.getProperty(plus.runtime.appid, (appInfo) => {
-	// 	// appInfo为当前应用程序的所有信息
-	// 	this.globalData.version = appInfo.version
-	// 	this.globalData.versionCode = appInfo.versionCode
-	// 	console.log(this.globalData);
-
-	// });
-	    
   },
   onHide: function () {
     console.log("App Hide");
-	
-	
-	
-	
-	
   },
 };
 </script>
@@ -127,7 +27,83 @@ export default {
     src:url('https://zaiercommon.oss-cn-beijing.aliyuncs.com/HuaGuangGangTieZhiHei-KeBianTi-2.ttf') format('truetype');
 }
 
+@font-face {font-family:'宋体';
+    src:url('https://zaiercommon.oss-cn-beijing.aliyuncs.com/SIMYOU.TTF') format('truetype');
+}
 
+@font-face {font-family:'幼圆体';
+    src:url('https://zaiercommon.oss-cn-beijing.aliyuncs.com/simsun.ttc') format('truetype');
+}
+
+@font-face {font-family:'浮沉繁花';
+    src:url('https://zaiercommon.oss-cn-beijing.aliyuncs.com/%E6%B5%AE%E6%B2%89%E7%B9%81%E8%8A%B1.ttf') format('truetype');
+}
+@font-face {font-family:'花落寄相思';
+    src:url('https://zaiercommon.oss-cn-beijing.aliyuncs.com/%E8%8A%B1%E8%90%BD%E5%AF%84%E7%9B%B8%E6%80%9D.ttf') format('truetype');
+}
+@font-face {font-family:'华康金文体';
+    src:url('https://zaiercommon.oss-cn-beijing.aliyuncs.com/%E5%8D%8E%E5%BA%B7%E9%87%91%E6%96%87%E4%BD%93W3-GB.ttc') format('truetype');
+}
+@font-face {font-family:'华康勘亭流';
+    src:url('https://zaiercommon.oss-cn-beijing.aliyuncs.com/%E5%8D%8E%E5%BA%B7%E5%8B%98%E4%BA%AD%E6%B5%81W9.TTF') format('truetype');
+}
+@font-face {font-family:'华康俪金黑体简';
+    src:url('https://zaiercommon.oss-cn-beijing.aliyuncs.com/%E5%8D%8E%E5%BA%B7%E4%BF%AA%E9%87%91%E9%BB%91%E4%BD%93%E7%AE%80W81.ttc') format('truetype');
+}
+@font-face {font-family:'华康少女文字';
+    src:url('https://zaiercommon.oss-cn-beijing.aliyuncs.com/%E5%8D%8E%E5%BA%B7%E5%B0%91%E5%A5%B3%E6%96%87%E5%AD%97W5.TTF') format('truetype');
+}
+@font-face {font-family:'华康手札体';
+    src:url('https://zaiercommon.oss-cn-beijing.aliyuncs.com/%E5%8D%8E%E5%BA%B7%E6%89%8B%E6%9C%AD%E4%BD%93W7.ttf') format('truetype');
+}
+@font-face {font-family:'华康宋体简';
+    src:url('https://zaiercommon.oss-cn-beijing.aliyuncs.com/%E5%8D%8E%E5%BA%B7%E5%AE%8B%E4%BD%93%E7%AE%80W12.TTF') format('truetype');
+}
+@font-face {font-family:'华康娃娃体';
+    src:url('https://zaiercommon.oss-cn-beijing.aliyuncs.com/%E5%8D%8E%E5%BA%B7%E5%A8%83%E5%A8%83%E4%BD%93W5%28P%29.TTF') format('truetype');
+}
+@font-face {font-family:'华康圆体';
+    src:url('https://zaiercommon.oss-cn-beijing.aliyuncs.com/%E5%8D%8E%E5%BA%B7%E5%9C%86%E4%BD%93W7%28P%29.TTF') format('truetype');
+}
+@font-face {font-family:'蒙纳电脑体简';
+    src:url('https://zaiercommon.oss-cn-beijing.aliyuncs.com/%E8%92%99%E7%BA%B3%E7%94%B5%E8%84%91%E4%BD%93%E7%AE%80.ttf') format('truetype');
+}
+@font-face {font-family:'庞门正道标题体';
+    src:url('https://zaiercommon.oss-cn-beijing.aliyuncs.com/%E5%BA%9E%E9%97%A8%E6%AD%A3%E9%81%93%E6%A0%87%E9%A2%98%E4%BD%93.TTF') format('truetype');
+}
+@font-face {font-family:'晴圆等宽';
+    src:url('https://zaiercommon.oss-cn-beijing.aliyuncs.com/%E6%99%B4%E5%9C%86%E7%AD%89%E5%AE%BD.ttc') format('truetype');
+}
+@font-face {font-family:'山涧流水';
+    src:url('https://zaiercommon.oss-cn-beijing.aliyuncs.com/%E5%B1%B1%E6%B6%A7%E6%B5%81%E6%B0%B4.ttf') format('truetype');
+}
+@font-face {font-family:'苏新诗卵石体';
+    src:url('https://zaiercommon.oss-cn-beijing.aliyuncs.com/%E8%8B%8F%E6%96%B0%E8%AF%97%E5%8D%B5%E7%9F%B3%E4%BD%93.ttf') format('truetype');
+}
+@font-face {font-family:'英雄黑体';
+    src:url('https://zaiercommon.oss-cn-beijing.aliyuncs.com/%E5%AD%97%E9%AD%823%E5%8F%B7-%E8%8B%B1%E9%9B%84%E9%BB%91%E4%BD%93.ttf') format('truetype');
+}
+@font-face {font-family:'石头体';
+    src:url('https://zaiercommon.oss-cn-beijing.aliyuncs.com/%E5%AD%97%E9%AD%8220%E5%8F%B7-%E7%9F%B3%E5%A4%B4%E4%BD%93.ttf') format('truetype');
+}
+@font-face {font-family:'空灵体';
+    src:url('https://zaiercommon.oss-cn-beijing.aliyuncs.com/%E5%AD%97%E9%AD%8278%E5%8F%B7-%E7%A9%BA%E7%81%B5%E4%BD%93.ttf') format('truetype');
+}
+@font-face {font-family:'萌趣露珠体';
+    src:url('https://zaiercommon.oss-cn-beijing.aliyuncs.com/%E5%AD%97%E9%AD%82106%E5%8F%B7-%E8%90%8C%E8%B6%A3%E9%9C%B2%E7%8F%A0%E4%BD%93.ttf') format('truetype');
+}
+@font-face {font-family:'七岁半';
+    src:url('https://zaiercommon.oss-cn-beijing.aliyuncs.com/%E5%AD%97%E9%AD%82122%E5%8F%B7-%E4%B8%83%E5%B2%81%E5%8D%8A.ttf') format('truetype');
+}
+@font-face {font-family:'萌趣芋圆体';
+    src:url('https://zaiercommon.oss-cn-beijing.aliyuncs.com/%E5%AD%97%E9%AD%82139%E5%8F%B7-%E8%90%8C%E8%B6%A3%E8%8A%8B%E5%9C%86%E4%BD%93.ttf') format('truetype');
+}
+@font-face {font-family:'灵动布丁体';
+    src:url('https://zaiercommon.oss-cn-beijing.aliyuncs.com/%E5%AD%97%E9%AD%82234%E5%8F%B7-%E7%81%B5%E5%8A%A8%E5%B8%83%E4%B8%81%E4%BD%93.ttf') format('truetype');
+}
+@font-face {font-family:'纸飞机';
+    src:url('https://zaiercommon.oss-cn-beijing.aliyuncs.com/%E5%AD%97%E9%AD%82261%E5%8F%B7-%E7%BA%B8%E9%A3%9E%E6%9C%BA.ttf') format('truetype');
+}
 
 
 body {

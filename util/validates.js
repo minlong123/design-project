@@ -7,6 +7,10 @@ export function isExternal(path) {
   return /^(https?:|mailto:|tel:|\/\/)/.test(path)
 }
 
+export function bodyScroll(event){
+  event.preventDefault();
+}
+
 /**
  * @description 校验密码是否小于6位
  * @param value

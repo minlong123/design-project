@@ -22,41 +22,9 @@
     <view class="setting-row" v-for="(item,index) in allnav" :key="index" @click="visit(item.id,item.name)">
       <view class="setting-row-left">{{item.name}}</view>
       <view class="setting-row-right">
-        <u-icon v-if="item.isicon" name="arrow-right" color="#cacaca" size="40"></u-icon>
+        <u-icon v-if="(item.isarrow == 2)" name="arrow-right" color="#cacaca" size="40"></u-icon>
       </view>
     </view>
-
-    <!-- <view class="setting-row">
-      <view class="setting-row-left">常见问题收集</view>
-      <view class="setting-row-right">
-      </view>
-    </view>
-
-    <view class="setting-row">
-      <view class="setting-row-left">注册协议</view>
-      <view class="setting-row-right">
-        <u-icon name="arrow-right" color="#cacaca" size="40"></u-icon>
-      </view>
-    </view>
-
-    <view class="setting-row">
-      <view class="setting-row-left">隐私协议</view>
-      <view class="setting-row-right">
-        <u-icon name="arrow-right" color="#cacaca" size="40"></u-icon>
-      </view>
-    </view>
-
-    <view class="setting-row">
-      <view class="setting-row-left">服务协议</view>
-      <view class="setting-row-right">
-        <u-icon name="arrow-right" color="#cacaca" size="40"></u-icon>
-      </view>
-    </view> -->
-
-    <!-- <view class="setting-row">
-      <view class="setting-row-left">当前版本</view>
-      <view class="setting-row-right">1.0.0</view>
-    </view> -->
 
 	</view>
 </template>
@@ -64,36 +32,28 @@
 <script>
 
   import { DEV_URL } from "../../config/index";
+  import {getdocument } from "@/api/design/index"
 
 	export default {
 		data() {
 			return {
         type:"",
-        logo:DEV_URL+"/assets/design/loves.jpg",
-        allnav:[{
-          id:1,
-          name:'如何制作照片墙',
-          isicon:false,
-        },{
-          id:2,
-          name:'如何制作横幅',
-          isicon:false,
-        },{
-          id:3,
-          name:'如何洗照片',
-          isicon:true,
-        },{
-          id:4,
-          name:'联系我们',
-          isicon:true,
-        },{
-          id:5,
-          name:'关于我们',
-          isicon:true,
-        }]
+        logo:DEV_URL+"/assets/loves.jpg",
+        allnav:[]
 			}
 		},
+    onLoad(){
+      this.getData();
+    },
 		methods: {
+      getData(){
+        var that=this;
+        getdocument().then((res) => {
+          if(res.code == 1){
+            that.allnav=res.data;
+          }
+        })
+      },
       visit(id,name){
         uni.navigateTo({
           url:"/pages/agament/index?id="+id+"&name="+name

@@ -9,6 +9,7 @@
             bottom: 0,
             backgroundColor: bgColor,
             display: 'flex',
+            zIndex:9999999999999,
         }"
     >
         <view class="u-loading-page">

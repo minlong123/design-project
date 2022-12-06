@@ -12,9 +12,10 @@
   <script>
 	  
   import { DEV_URL } from "../../config/index";
-//   import { getAgaent } from "@/api/person/person"
   import skeleton from "@/components/xinyi-skeleton/skeleton.vue"
-  
+  import {getdocumentDetails } from "@/api/design/index"
+
+
   export default {
 	components: {
 		skeleton,
@@ -48,7 +49,7 @@
 		getDatas(id){
 			
 		  var that=this;
-		  getAgaent({id:id}).then((res) => {
+		  getdocumentDetails({id:id}).then((res) => {
 
 			  
 			  if(res.code == 1){
