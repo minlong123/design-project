@@ -355,7 +355,7 @@ export default {
 			canvas: "",
 			canvaswidth: 750,
 			canvasheight: 974,
-			bigwidth:3000,
+			bigwidth:2386,
 			bigheight:0,
 			actionbox: "",
 			isphotowall:true,
@@ -456,7 +456,7 @@ export default {
 
 		},
 		canvasinit(){
-			this.bigwidth=3000;
+			this.bigwidth=2386;
 			let lv=this.bigwidth/this.canvaswidth
 			this.bigheight=Math.ceil(this.canvasheight*lv);
 		},

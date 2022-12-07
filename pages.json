@@ -45,7 +45,7 @@
 		}, {
 			"path": "pages/nums/index",
 			"style": {
-				"navigationBarTitleText": "编码详情"
+				"navigationBarTitleText": "提交成功"
 			}
 		}
     ],
