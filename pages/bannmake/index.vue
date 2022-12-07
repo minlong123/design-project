@@ -154,26 +154,32 @@ import {savebanerre } from "@/api/design/index"
 			savebanerre(resdata).then((res) => {
 				if(res.code == 1){
 
-					uni.showModal({
+					that.textcon="";
+					uni.reLaunch({
+						url:"/pages/nums/index?nums="+res.data+"&type=1"
+					})
+					
+					
+					// uni.showModal({
 
-						title: "提示",
-						content: "提交成功，是否继续制作？",
-						confirmText: "继续制作横幅",//这块是确定按钮的文字
-						cancelText:"取消",//这块是取消的文字
-						success: function (res) {
-						if (res.confirm) {
+					// 	title: "提示",
+					// 	content: "提交成功，是否继续制作？",
+					// 	confirmText: "继续制作横幅",//这块是确定按钮的文字
+					// 	cancelText:"取消",//这块是取消的文字
+					// 	success: function (res) {
+					// 	if (res.confirm) {
 						
-							that.textcon="";
+					// 		that.textcon="";
 						
-						} else if (res.cancel) {
+					// 	} else if (res.cancel) {
 							
-							uni.switchTab({
-								url:"/pages/banner/index"
-							})
+					// 		uni.switchTab({
+					// 			url:"/pages/banner/index"
+					// 		})
 
-						}
-						},
-					});
+					// 	}
+					// 	},
+					// });
 
 				}else{
 					wx.showToast({

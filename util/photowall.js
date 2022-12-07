@@ -1,0 +1,3 @@
+
+// 爱心的坐标
+let love=[{"left":93,"top":286,"width":75,"height":117},{"left":108,"top":412,"width":58,"height":62},{"left":171,"top":227,"width":112,"height":119},{"left":171,"top":353,"width":131,"height":143},{"left":197,"top":503,"width":105,"height":62},{"left":236,"top":570,"width":66,"height":63},{"left":288,"top":279,"width":71,"height":67},{"left":307,"top":353,"width":132,"height":143},{"left":307,"top":503,"width":132,"height":142},{"left":338,"top":651,"width":70,"height":67},{"left":464,"top":227,"width":113,"height":119},{"left":443,"top":352,"width":134,"height":143},{"left":443,"top":503,"width":104,"height":62},{"left":444,"top":570,"width":66,"height":63},{"left":582,"top":286,"width":75,"height":117},{"left":582,"top":412,"width":58,"height":62}];

@@ -234,30 +234,38 @@
 	
 			};
 			savewashphoto(resdata).then((res) => {
-				if(res.code == 1){
-					var that=this;
-					uni.showModal({
 
-						title: "提示",
-						content: "提交成功，是否继续洗照片？",
-						confirmText: "继续洗照片",//这块是确定按钮的文字
-						cancelText:"退出",//这块是取消的文字
-						success: function (res) {
-							if (res.confirm) {
+				if(res.code == 1){
+
+
+					this.allimg=[];
+					uni.reLaunch({
+						url:"/pages/nums/index?nums="+res.data+"&type=2"
+					})
+					// uni.showModal({
+
+					// 	title: "提示",
+					// 	content: "提交成功，是否继续洗照片？",
+					// 	confirmText: "继续洗照片",//这块是确定按钮的文字
+					// 	cancelText:"退出",//这块是取消的文字
+					// 	success: function (res) {
+					// 		if (res.confirm) {
 								
-								that.allimg=[];
-								uni.switchTab({
-									url:"/pages/photo/index"
-								})
+					// 			that.allimg=[];
+					// 			uni.switchTab({
+					// 				url:"/pages/photo/index"
+					// 			})
 							
-							} else if (res.cancel) {
+					// 		} else if (res.cancel) {
 								
-								uni.switchTab({
-									url:"/pages/index/index"
-								})
-							}
-						},
-					});
+					// 			uni.switchTab({
+					// 				url:"/pages/index/index"
+					// 			})
+					// 		}
+					// 	},
+					// });
+
+
 				}else{
 					wx.showToast({
 						icon: 'none',

@@ -42,6 +42,10 @@
         allnav:[]
 			}
 		},
+    onPullDownRefresh: function () {
+      this.getData();
+      uni.stopPullDownRefresh()
+    },
     onLoad(){
       this.getData();
     },

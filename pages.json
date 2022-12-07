@@ -30,8 +30,7 @@
 		}, {
 			"path": "pages/agament/index",
 			"style": {
-				"navigationBarTitleText": "细则",
-				"enablePullDownRefresh":true
+				"navigationBarTitleText": "细则"
 			}
 		}, {
 			"path": "pages/make/index",
@@ -42,6 +41,11 @@
 			"path": "pages/bannmake/index",
 			"style": {
 				"navigationBarTitleText": "横幅制作"
+			}
+		}, {
+			"path": "pages/nums/index",
+			"style": {
+				"navigationBarTitleText": "编码详情"
 			}
 		}
     ],

@@ -40,6 +40,7 @@
 	  }
 	},
 	onPullDownRefresh: function () {
+		this.getData();
 		uni.stopPullDownRefresh()
 	},
 	computed: {

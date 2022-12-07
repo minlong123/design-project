@@ -1472,28 +1472,33 @@ export default {
 				that.subloading=false;
 				if(res.code == 1){
 
-					uni.showModal({
+					uni.reLaunch({
+						url:"/pages/nums/index?nums="+res.data+"&type=3"
+					})
+					// uni.showModal({
 
-						title: "提示",
-						content: "提交成功，是否继续制作？",
-						confirmText: "继续制作",//这块是确定按钮的文字
-						cancelText:"取消",//这块是取消的文字
-						success: function (res) {
-						if (res.confirm) {
+					// 	title: "提示",
+					// 	content: "提交成功，是否继续制作？",
+					// 	confirmText: "继续制作",//这块是确定按钮的文字
+					// 	cancelText:"取消",//这块是取消的文字
+					// 	success: function (res) {
+					// 	if (res.confirm) {
 						
-							uni.navigateTo({
-								url:"/pages/make/index?id="+that.id+"&name="+that.name
-							})
+					// 		uni.navigateTo({
+					// 			url:"/pages/make/index?id="+that.id+"&name="+that.name
+					// 		})
 									
-						} else if (res.cancel) {
+					// 	} else if (res.cancel) {
 							
-							uni.switchTab({
-								url:"/pages/index/index"
-							})
+					// 		uni.switchTab({
+					// 			url:"/pages/index/index"
+					// 		})
 
-						}
-						},
-					});
+					// 	}
+					// 	},
+					// });
+
+
 
 				}else{
 

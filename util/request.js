@@ -135,7 +135,7 @@ const fetch = {
     if (showLoading) {
       uni.showLoading({
         mask: true,
-        title: "请稍候,正在上传...",
+        title: "正在上传...",
       });
     }
     let requestUrl = fetch.devUrl2 + url;
