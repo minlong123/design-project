@@ -354,7 +354,7 @@ export default {
 			isupload: true,
 			canvas: "",
 			canvaswidth: 750,
-			canvasheight: 974,
+			canvasheight: 944,
 			bigwidth:2386,
 			bigheight:0,
 			actionbox: "",
@@ -410,7 +410,19 @@ export default {
 		this.noPullDown();
 		this.canvasinit();
 	},
-
+	watch:{
+		issedit(value){
+			if(!value){
+				uni.pageScrollTo({
+					duration:100,//过渡时间必须为0，uniapp bug，否则运行到手机会报错
+					scrollTop: 0,//滚动到目标位置
+					success:function(){
+				
+					}
+				})
+			}
+		}
+	},
 	methods: {
 		getData(id){
 			var that=this;
@@ -427,7 +439,7 @@ export default {
 			this.issedit=true;
 		},
 		addsourcein(index){
-			console.log(index);
+			// console.log(index);
 			let obj=this.allsourceimg[index].img;
 			let textobj={
 				img:obj,
@@ -458,7 +470,7 @@ export default {
 		canvasinit(){
 			this.bigwidth=2386;
 			let lv=this.bigwidth/this.canvaswidth
-			this.bigheight=Math.ceil(this.canvasheight*lv);
+			this.bigheight=Math.floor(this.canvasheight*lv);
 		},
 		noPullDown() {
 			//禁止页面拖动
@@ -785,7 +797,7 @@ export default {
 				return;
 			}
 			// console.log(event);
-			console.log("开始拖拽")
+			// console.log("开始拖拽")
 			this.currdropbox = index;
 			const { clientX, clientY } = event.touches[0];
 			// console.log(event.touches[0]);
@@ -838,7 +850,7 @@ export default {
 			// 图片拖拽
 			if (this.isstart) {
 
-				console.log(event);
+				// console.log(event);
 
 				// 如果只是点击了一下，啥都不干
 				if(this.startx == this.endx && this.starty == this.endy){
@@ -1274,7 +1286,7 @@ export default {
 					},
 					fail: function (res) {
 						that.loadings=false;
-						console.log(res);
+						// console.log(res);
 					}
 				});  
 				
@@ -1420,7 +1432,7 @@ export default {
 					},
 					fail: function (res) {
 						that.loadings=false;
-						console.log(res);
+						// console.log(res);
 					}
 				});
 			});
@@ -1630,14 +1642,14 @@ page {
 		left: 0;
 		top: 0;
 		width:750rpx;
-		height: 974rpx;
+		height: 944rpx;
 		border: 61rpx solid #f7c694;
 		box-sizing: border-box;
 	}
 
 	.make-area {
 		width:750rpx;
-		height: 974rpx;
+		height: 944rpx;
 		position: absolute;
 		left: 0;
 		top: 0;
