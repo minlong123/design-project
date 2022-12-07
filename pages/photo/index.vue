@@ -91,12 +91,9 @@
 
 		</view>
 
-
 		<view style="height:200rpx;"></view>
 	  <u-loading-page loading-text="正在加载中..." :loading="loading"></u-loading-page>
   
-
-
 	</view>
   </template>
   
@@ -104,6 +101,10 @@
   <script>
    import { IMG_URL } from "../../config/index";
    import { bodyScroll } from "@/util/validates.js";
+   import { upload } from "@/util/request.js"
+   import {savewashphoto } from "@/api/design/index"
+   
+
   export default {
 	data() {
 	  return {
@@ -154,6 +155,7 @@
 
 	},
 	methods: {
+		
 		preview(index){
 			
 			if(!this.allimg[index]){
@@ -214,35 +216,55 @@
 				})
 				return;
 			}
+
 			uni.setStorage({
 				key: 'design-contact',
 				data:this.phones,
 			})
-			var that=this;
-			uni.showModal({
 
-				title: "提示",
-				content: "提交成功，是否继续洗照片？",
-				confirmText: "继续洗照片",//这块是确定按钮的文字
-				cancelText:"退出",//这块是取消的文字
-				success: function (res) {
-					if (res.confirm) {
-						
-						that.allimg=[];
-						uni.switchTab({
-							url:"/pages/photo/index"
-						})
-					
-					} else if (res.cancel) {
-						
-						uni.switchTab({
-							url:"/pages/index/index"
-						})
+			let alldata=[];
+			for(let i=0;i<this.allimg.length;i++){
+				alldata.push(this.allimg[i].online);
+			}
 
-					}
-				},
-			});
+			let resdata={
+				'size':this.photosize,
+				'images':alldata.join(","),
+				'phones':this.phones,
+	
+			};
+			savewashphoto(resdata).then((res) => {
+				if(res.code == 1){
+					var that=this;
+					uni.showModal({
 
+						title: "提示",
+						content: "提交成功，是否继续洗照片？",
+						confirmText: "继续洗照片",//这块是确定按钮的文字
+						cancelText:"退出",//这块是取消的文字
+						success: function (res) {
+							if (res.confirm) {
+								
+								that.allimg=[];
+								uni.switchTab({
+									url:"/pages/photo/index"
+								})
+							
+							} else if (res.cancel) {
+								
+								uni.switchTab({
+									url:"/pages/index/index"
+								})
+							}
+						},
+					});
+				}else{
+					wx.showToast({
+						icon: 'none',
+						title: "保存异常，请稍后再试！"
+					})
+				}
+			})
 		},
 		varphone(phone){
 			if (!(/^1[34578]\d{9}$/.test(phone))) {
@@ -251,12 +273,12 @@
 				return true;
 			}
 		},
-	setsize(){
-		this.sizeshow=true;
-	},
-	closefontset(index){
-		this.allimg.splice(index,1);
-	},
+		setsize(){
+			this.sizeshow=true;
+		},
+		closefontset(index){
+			this.allimg.splice(index,1);
+		},
 	  visits(){
 		  uni.navigateTo({
 			url:"/pages/about/index"
@@ -293,6 +315,7 @@
 					// 获取图片的真实宽高
 					let allobj={
 						img:uploadimg[i],
+						online:"",
 						width:150,
 						height:150,
 						theight:0,
@@ -305,11 +328,18 @@
 							// 计算比例
 							allobj.theight=image.width;
 							allobj.twidth=image.height;
-							that.allimg.unshift(allobj);
+							let updata=upload("/api/Common/upload",{},uploadimg[i],true);
+							updata.then(function(res){
+
+								let result=JSON.parse(res);
+								allobj.online=result.data.url;
+								that.allimg.unshift(allobj);
+					
+							})
+
 						}
 					})
-			
-					
+
 				
 				}
 					
@@ -418,7 +448,7 @@
 				position: absolute;
 				top: -30rpx;
 				right: -30rpx;
-				z-index: 99999999999;
+				z-index: 1;
 				box-shadow: 0 0 5px rgb(140, 140, 140);
 				background: #FFF;
 				border-radius: 50%;

@@ -4,11 +4,11 @@
 
 	  <view class="photo-wall">
   
-		  <view class="photo-row" @click="makephoto">
+		  <view class="photo-row" @click="makephoto(item.id,item.picimage,item.fontnum,item.name)" v-for="(item,index) in allbanner" :key="index">
 				  <u-image
 			  ref="uImage"
 			  :lazy-load="true"
-			  :src="newimg"
+			  :src="item.picimage"
 			  mode="aspectFill"
 			  height="210"
 			  width="210"
@@ -16,7 +16,7 @@
 			  >
 			  <u-loading-icon size="20" slot="loading"></u-loading-icon>
 			  </u-image>
-			  <text>横幅A</text>
+			  <text>{{item.name}}</text>
 		  </view>
   
 	  </view>
@@ -29,12 +29,14 @@
   
   <script>
    import { IMG_URL } from "../../config/index";
-  
+   import {getBanners } from "@/api/design/index"
+
+
   export default {
 	data() {
 	  return {
 		loading:false,
-		newimg:IMG_URL+"/image/a.jpg",
+		allbanner:[],
 	  }
 	},
 	onPullDownRefresh: function () {
@@ -44,16 +46,26 @@
   
 	},
 	created() {
+		this.getData();
 	},
 	onShow() {
-		
+		this.getData();
 	},
 	onLoad(){
+		this.getData();
 	},
 	methods: {
-	  makephoto(){
+		getData(){
+			var that=this;
+			getBanners().then((res) => {
+				if(res.code == 1){
+					that.allbanner=res.data;
+				}
+			})
+		},
+	  makephoto(id,img,fontnum,name){
 		  uni.navigateTo({
-			url:"/pages/bannmake/index"
+			url:"/pages/bannmake/index?id="+id+"&img="+encodeURIComponent(img)+"&fontnum="+fontnum+"&name="+name
 		  })
 	  }
 	

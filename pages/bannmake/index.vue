@@ -45,20 +45,23 @@
   
   
   <script>
-   import { IMG_URL } from "../../config/index";
+
+import {savebanerre } from "@/api/design/index"
+
   
   export default {
 	data() {
 	  return {
 		loading:false,
-		newimg:IMG_URL+"/image/a.jpg",
 		swidth:725,
 		sheight:0,
 		twidth:0,
 		theight:0,
 		textcon:"",
 		phones:"",
-		maxsize:25
+		maxsize:25,
+		id:"",
+		name:"",
 	  }
 	},
 	computed: {
@@ -69,8 +72,19 @@
 	onShow() {
 		
 	},
-	onLoad(){
-		this.init();
+	onLoad(options){
+
+		if(options){
+
+
+			this.maxsize=options.fontnum;
+			this.newimg=decodeURIComponent(options.img);
+			this.id=options.id;
+			this.name=options.name;
+			this.init();
+
+		}
+		
 	},
 	methods: {
 		preview(){
@@ -128,28 +142,54 @@
 				key: 'design-contact',
 				data:this.phones,
 			})
-			uni.showModal({
 
-				title: "提示",
-				content: "提交成功，是否继续制作？",
-				confirmText: "继续制作横幅",//这块是确定按钮的文字
-				cancelText:"取消",//这块是取消的文字
-				success: function (res) {
-				if (res.confirm) {
-				
-					uni.redirectTo({
-						url:"/pages/bannmake/index"
-					})
-				
-				} else if (res.cancel) {
-					
-					uni.switchTab({
-						url:"/pages/banner/index"
-					})
+			let resdata={
+				'id':this.id,
+				'name':this.name,
+				'fonts':this.textcon,
+				'images':this.newimg,
+				'phones':this.phones,
+			};
+			var that=this;
+			savebanerre(resdata).then((res) => {
+				if(res.code == 1){
 
+					uni.showModal({
+
+						title: "提示",
+						content: "提交成功，是否继续制作？",
+						confirmText: "继续制作横幅",//这块是确定按钮的文字
+						cancelText:"取消",//这块是取消的文字
+						success: function (res) {
+						if (res.confirm) {
+						
+							that.textcon="";
+						
+						} else if (res.cancel) {
+							
+							uni.switchTab({
+								url:"/pages/banner/index"
+							})
+
+						}
+						},
+					});
+
+				}else{
+					wx.showToast({
+						icon: 'none',
+						title: "保存异常，请稍后再试！"
+					})
 				}
-				},
-			});
+		
+			})
+
+
+
+
+
+
+
 
 		},
 		varphone(phone){

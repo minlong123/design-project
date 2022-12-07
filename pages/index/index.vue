@@ -51,7 +51,7 @@
 <text class="preloadfont26">字</text>
 	<view class="photo-wall">
 
-		<view class="photo-row" @click="makephoto" v-for="(item,index) in datas" :key="index">
+		<view class="photo-row" @click="makephoto(item.id,item.name)" v-for="(item,index) in datas" :key="index">
 				<u-image
 			ref="uImage"
 			:lazy-load="true"
@@ -116,9 +116,9 @@ export default {
           url:"/pages/about/index"
         })
 	},
-	makephoto(){
+	makephoto(id,name){
 		uni.navigateTo({
-          url:"/pages/make/index"
+          url:"/pages/make/index?id="+id+"&name="+name
         })
 	}
   

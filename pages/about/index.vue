@@ -38,7 +38,7 @@
 		data() {
 			return {
         type:"",
-        logo:DEV_URL+"/assets/loves.jpg",
+        logo:DEV_URL+"/logo.png",
         allnav:[]
 			}
 		},

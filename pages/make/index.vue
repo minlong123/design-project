@@ -3,6 +3,8 @@
 
 		<u-loading-page loading-text="正在制作中..." :loading="loadings"></u-loading-page>
 
+		<u-loading-page loading-text="正在提交中..." :loading="subloading"></u-loading-page>
+
 
 		<view v-if="!isexport">
 
@@ -177,7 +179,7 @@
 							<u-image
 						ref="uImage"
 						:lazy-load="true"
-						:src="item.img"
+						:src="item.smallimg"
 						mode="aspectFill"
 						height="210"
 						width="210"
@@ -289,13 +291,14 @@ import { DEV_URL } from "../../config/index";
 import changedpi from "@/util/changdpi.js"
 import { bodyScroll } from "@/util/validates.js";
 import { pathToBase64 } from "@/util/tobase.js";
-import { getphotoparam,getCateImgDetail } from "@/api/design/index"
+import { getphotoparam,getCateImgDetail,savephotowall } from "@/api/design/index"
 
 
 export default {
 	data() {
 		return {
 			issedit:false,
+			subloading:false,
 			isexport: false,
 			exportsrc: "",
 			loadings:false,
@@ -315,11 +318,8 @@ export default {
 			isfedit:false,
 			currfontindex:"",
 			selectsour:0,
-			newimg:DEV_URL+"/assets/design/loves.jpg",
-			allsourceimg:[{
-				'img':DEV_URL+"/assets/design/loves.jpg"
-			}],
-			allsourcate:['爱心','表情包','氛围点缀','父亲节','教师节','母亲节','气球'],
+			allsourceimg:[],
+			allsourcate:[],
 			familays:[
 				'宋体',
 				'幼圆体',
@@ -349,267 +349,8 @@ export default {
 				'灵动布丁体',
 				'纸飞机',
 			],
-			colors:['#7f284b','#4e172c','#fea002','#fd8c02','#fffd06','#d2ff02','#ff5fcb','#fe798e','#000000','#FFFFFF'],
-			photowall: [{
-				id: 1,
-				left: 93,
-				top: 286,
-				width: 75,
-				height: 117,
-				// img:"https://mails.ztu123.com/assets/design/loves.jpg",
-				// twidth:391,
-				// theight:391,
-				img: false,
-				twidth: 0,
-				theight: 0,
-				scale: 1,
-				rotate: 0,
-				tranx: 0,
-				trany: 0,
-				centerx: 0,
-				centery: 0,
-				zindex:1,
-			}, {
-				id: 2,
-				left: 108,
-				top: 412,
-				width: 58,
-				height: 62,
-				img: false,
-				twidth: 0,
-				theight: 0,
-				scale: 1,
-				rotate: 0,
-				tranx: 0,
-				trany: 0,
-				centerx: 0,
-				centery: 0,
-				zindex:1,
-			}, {
-				id: 3,
-				left: 171,
-				top: 227,
-				width: 112,
-				height: 119,
-				img: false,
-				twidth: 0,
-				theight: 0,
-				scale: 1,
-				rotate: 0,
-				tranx: 0,
-				trany: 0,
-				centerx: 0,
-				centery: 0,
-				zindex:1,
-			}, {
-				id: 4,
-				left: 171,
-				top: 353,
-				width: 131,
-				height: 143,
-				img: false,
-				twidth: 0,
-				theight: 0,
-				scale: 1,
-				rotate: 0,
-				tranx: 0,
-				trany: 0,
-				centerx: 0,
-				centery: 0,
-				zindex:1,
-			}, {
-				id: 5,
-				left: 197,
-				top: 503,
-				width: 105,
-				height: 62,
-				img: false,
-				twidth: 0,
-				theight: 0,
-				scale: 1,
-				rotate: 0,
-				tranx: 0,
-				trany: 0,
-				centerx: 0,
-				centery: 0,
-				zindex:1,
-			}, {
-				id: 6,
-				left: 236,
-				top: 570,
-				width: 66,
-				height: 63,
-				img: false,
-				twidth: 0,
-				theight: 0,
-				scale: 1,
-				rotate: 0,
-				tranx: 0,
-				trany: 0,
-				centerx: 0,
-				centery: 0,
-				zindex:1,
-			}, {
-				id: 7,
-				left: 288,
-				top: 279,
-				width: 71,
-				height: 67,
-				img: false,
-				twidth: 0,
-				theight: 0,
-				scale: 1,
-				rotate: 0,
-				tranx: 0,
-				trany: 0,
-				centerx: 0,
-				centery: 0,
-				zindex:1,
-			}, {
-				id: 8,
-				left: 307,
-				top: 353,
-				width: 132,
-				height: 143,
-				img: false,
-				twidth: 0,
-				theight: 0,
-				scale: 1,
-				rotate: 0,
-				tranx: 0,
-				trany: 0,
-				centerx: 0,
-				centery: 0,
-				zindex:1,
-			}, {
-				id: 9,
-				left: 307,
-				top: 503,
-				width: 132,
-				height: 142,
-				img: false,
-				twidth: 0,
-				theight: 0,
-				scale: 1,
-				rotate: 0,
-				tranx: 0,
-				trany: 0,
-				centerx: 0,
-				centery: 0,
-				zindex:1,
-			}, {
-				id: 10,
-				left: 338,
-				top: 651,
-				width: 70,
-				height: 67,
-				img: false,
-				twidth: 0,
-				theight: 0,
-				scale: 1,
-				rotate: 0,
-				tranx: 0,
-				trany: 0,
-				centerx: 0,
-				centery: 0,
-				zindex:1,
-			}, {
-				id: 11,
-				left: 464,
-				top: 227,
-				width: 113,
-				height: 119,
-				img: false,
-				twidth: 0,
-				theight: 0,
-				scale: 1,
-				rotate: 0,
-				tranx: 0,
-				trany: 0,
-				centerx: 0,
-				centery: 0,
-				zindex:1,
-			}, {
-				id: 12,
-				left: 443,
-				top: 352,
-				width: 134,
-				height: 143,
-				img: false,
-				twidth: 0,
-				theight: 0,
-				scale: 1,
-				rotate: 0,
-				tranx: 0,
-				trany: 0,
-				centerx: 0,
-				centery: 0,
-				zindex:1,
-			}, {
-				id: 13,
-				left: 443,
-				top: 503,
-				width: 104,
-				height: 62,
-				img: false,
-				twidth: 0,
-				theight: 0,
-				scale: 1,
-				rotate: 0,
-				tranx: 0,
-				trany: 0,
-				centerx: 0,
-				centery: 0,
-				zindex:1,
-			}, {
-				id: 14,
-				left: 444,
-				top: 570,
-				width: 66,
-				height: 63,
-				img: false,
-				twidth: 0,
-				theight: 0,
-				scale: 1,
-				rotate: 0,
-				tranx: 0,
-				trany: 0,
-				centerx: 0,
-				centery: 0,
-				zindex:1,
-			}, {
-				id: 15,
-				left: 582,
-				top: 286,
-				width: 75,
-				height: 117,
-				img: false,
-				twidth: 0,
-				theight: 0,
-				scale: 1,
-				rotate: 0,
-				tranx: 0,
-				trany: 0,
-				centerx: 0,
-				centery: 0,
-				zindex:1,
-			}, {
-				id: 16,
-				left: 582,
-				top: 412,
-				width: 58,
-				height: 62,
-				img: false,
-				twidth: 0,
-				theight: 0,
-				scale: 1,
-				rotate: 0,
-				tranx: 0,
-				trany: 0,
-				centerx: 0,
-				centery: 0,
-				zindex:1,
-			}],
+			colors:[],
+			photowall:[],
 			isupload: true,
 			canvas: "",
 			canvaswidth: 750,
@@ -655,10 +396,15 @@ export default {
 			boximginfo:{}
 		}
 	},
-	onLoad() {
-		this.noPullDown();
-		this.canvasinit();
-		this.getData();
+	onLoad(options) {
+		if(options){
+			this.id=options.id;
+			this.name=options.name;
+			this.noPullDown();
+			this.canvasinit();
+			this.getData(this.id);
+		}
+
 	},
 	mounted() {
 		this.noPullDown();
@@ -666,13 +412,14 @@ export default {
 	},
 
 	methods: {
-		getData(){
+		getData(id){
 			var that=this;
-			getphotoparam().then((res) => {
+			getphotoparam({id:id}).then((res) => {
 				if(res.code == 1){
 					that.colors=res.data['colors'];
 					that.allsourcate=res.data['catename']
 					that.allsourceimg=res.data['allimg'];
+					that.photowall=res.data['photowall'];
 				}
 			})
 		},
@@ -732,7 +479,11 @@ export default {
 
 			})
 		},
+		movemove(){
+			document.querySelector('body').removeEventListener('touchmove',bodyScroll, { passive: false })
+		},
 		imgTouchstart(event, index) {
+		
 			event.stopPropagation()
 
 			// console.log(event);
@@ -941,6 +692,7 @@ export default {
 			}).exec();
 		},
 		textTouchstart(event, index) {
+	
 			event.stopPropagation()
 
 			// console.log(event);
@@ -1005,7 +757,7 @@ export default {
 			event.preventDefault();
 		},
 		textTouchend(){
-
+		
 			// 如果只是点击了一下，啥都不干
 			if(this.tstartx == this.tendx && this.tstarty == this.tendy){
 			
@@ -1026,6 +778,7 @@ export default {
 
 		},
 		handleTouchstart(event, index) {
+	
 			event.stopPropagation()
 			// 没有图片的话不触发
 			if(!this.photowall[index].img){
@@ -1392,8 +1145,8 @@ export default {
 				// 绘制图片
 				if (this.photowall[i].img) {
 
-					ctx.setFillStyle('#e3e1e5');
-					ctx.fillRect(uni.upx2px(this.photowall[i].left)*lv, uni.upx2px(this.photowall[i].top)*lv, uni.upx2px(this.photowall[i].width)*lv, uni.upx2px(this.photowall[i].height)*lv)
+					// ctx.setFillStyle('#e3e1e5');
+					ctx.fillRect(uni.upx2px(this.photowall[i].left*lv), uni.upx2px(this.photowall[i].top*lv), uni.upx2px(this.photowall[i].width*lv), uni.upx2px(this.photowall[i].height*lv))
 
 					ctx.clip();
 					// let lvs = this.photowall[i].theight / this.photowall[i].height
@@ -1476,41 +1229,32 @@ export default {
 
 			}
 
+			if(this.allsource.length != 0){
 
-			// 绘制素材
-			for (let i = 0; i < this.allsource.length; i++) {
+				
+								// 绘制素材
+				for (let i = 0; i < this.allsource.length; i++) {
+					
+					ctx.save(); 
+					// 旋转
+					ctx.translate(uni.upx2px(this.allsource[i].left*lv), uni.upx2px(this.allsource[i].top*lv));
+					ctx.rotate(this.allsource[i].rotate * Math.PI / 180)
+					ctx.translate(-uni.upx2px(this.allsource[i].left*lv) , -uni.upx2px(this.allsource[i].top*lv));
 
-				// 旋转
-				ctx.translate(uni.upx2px(this.allsource[i].left*lv), uni.upx2px(this.allsource[i].top*lv));
-				ctx.rotate(this.allsource[i].rotate * Math.PI / 180)
-				ctx.translate(-uni.upx2px(this.allsource[i].left*lv) , -uni.upx2px(this.allsource[i].top*lv));
-
-				// 解决跨域问题
-				pathToBase64(this.allsource[i].img)
-				.then(base64 => {
-					ctx.drawImage(base64,
-					uni.upx2px(this.allsource[i].left*lv),
-					uni.upx2px(this.allsource[i].top*lv),uni.upx2px(this.allsource[i].width*lv),uni.upx2px(this.allsource[i].height*lv))
-	
-					ctx.draw()
-				})
-				.catch(error => {
-					console.error(error)
-				})			
-
-
-			}
-
-			if(this.allsource.length == 0){
-				ctx.draw()
-			}
-
+					ctx.drawImage(this.allsource[i].img,
+						uni.upx2px(this.allsource[i].left*lv),
+						uni.upx2px(this.allsource[i].top*lv),uni.upx2px(this.allsource[i].width*lv),uni.upx2px(this.allsource[i].height*lv)) 		
+				}
 			
+			}
+
+			ctx.draw()
 
 			setTimeout(function () {
 
 				wx.canvasToTempFilePath({
 					canvasId: 'bigcanvas',
+					fileType:'jpeg',
 					success: function (res) {
 
 						that.isexport = true;
@@ -1532,9 +1276,9 @@ export default {
 						that.loadings=false;
 						console.log(res);
 					}
-				});
-
-			},1000);
+				});  
+				
+			},3000);
 
 		},
 		exportImg() {
@@ -1709,32 +1453,57 @@ export default {
 				})
 				return;
 			}
+
+			this.subloading=true;
 			uni.setStorage({
 				key: 'design-contact',
 				data:this.phones,
 			})
-			uni.showModal({
 
-				title: "提示",
-				content: "提交成功，是否继续制作？",
-				confirmText: "继续制作",//这块是确定按钮的文字
-				cancelText:"取消",//这块是取消的文字
-				success: function (res) {
-				if (res.confirm) {
-				
-					uni.redirectTo({
-						url:"/pages/make/index"
-					})
-				
-				} else if (res.cancel) {
-					
-					uni.switchTab({
-						url:"/pages/index/index"
-					})
+			let resdata={
+				'images':this.exportsrc,
+				'phones':this.phones,
+				'id':this.id,
+				'name':this.name,
+			};
+			var that=this;
+			savephotowall(resdata).then((res) => {
 
+				that.subloading=false;
+				if(res.code == 1){
+
+					uni.showModal({
+
+						title: "提示",
+						content: "提交成功，是否继续制作？",
+						confirmText: "继续制作",//这块是确定按钮的文字
+						cancelText:"取消",//这块是取消的文字
+						success: function (res) {
+						if (res.confirm) {
+						
+							uni.navigateTo({
+								url:"/pages/make/index?id="+that.id+"&name="+that.name
+							})
+									
+						} else if (res.cancel) {
+							
+							uni.switchTab({
+								url:"/pages/index/index"
+							})
+
+						}
+						},
+					});
+
+				}else{
+
+					wx.showToast({
+						icon: 'none',
+						title: "保存异常，请稍后再试！"
+					})
 				}
-				},
-			});
+		
+			})
 
 		},
 		addtext() {
@@ -1745,6 +1514,7 @@ export default {
 
 		},
 		exportswall() {
+			this.movemove();
 			this.loadings=true;
 			// this.exportImg();
 			this.exportBigImg();

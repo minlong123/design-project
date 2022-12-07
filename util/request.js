@@ -130,26 +130,27 @@ const fetch = {
       });
     });
   },
-  upload: function ({ url, params = {}, files = [], showLoading }) {
+  upload: function (url, params, files, showLoading) {
     //接口请求
     if (showLoading) {
       uni.showLoading({
         mask: true,
-        title: "请稍候...",
+        title: "请稍候,正在上传...",
       });
     }
     let requestUrl = fetch.devUrl2 + url;
-
     return new Promise((resolve, reject) => {
       uni.uploadFile({
         url: requestUrl,
-        files: files,
+        name:'file',
         formData: params,
+        filePath:files,
         header: {
-          tfToken: uni.getStorageSync("tfToken") || "",
+          tfToken: uni.getStorageSync("token") || "",
         },
         success: (res) => {
           showLoading && uni.hideLoading();
+          console.log("上传成功");
           resolve(res.data);
         },
         fail: (res) => {
@@ -164,8 +165,8 @@ const fetch = {
               fetch.toast("错误请求");
               break;
             case 401:
-			  uni.removeStorageSync('token');
-			  uni.removeStorageSync('userinfo');
+              uni.removeStorageSync('token');
+              uni.removeStorageSync('userinfo');
               fetch.toast("会话已过期，请重新登录");
               break;
             case 403:
@@ -210,6 +211,10 @@ const fetch = {
       });
     });
   },
+
+
+
+
 };
 
 module.exports = {
