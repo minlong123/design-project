@@ -6,7 +6,7 @@
 		</view>
 
 		<view class="add-photo-box">
-			<view class="addphoto" @click="addphones">
+			<view class="addphoto" @click="addphones" :class="{'actives':isupload==1}">
 				<u-icon name="plus" color="#FFF" size="60"></u-icon>
 			</view>
 		</view>
@@ -111,6 +111,7 @@
 		loading:false,
 		newimg:IMG_URL+"/image/a.jpg",
 		allimg:[],
+		isupload:1,
 		sizeshow:false,
 		columnsdata:[['1寸','2寸','3寸','4寸','5寸']],
 		photosize:"1寸",
@@ -342,6 +343,7 @@
 								let result=JSON.parse(res);
 								allobj.online=result.data.url;
 								that.allimg.unshift(allobj);
+								that.isupload=1;
 					
 							})
 
@@ -427,13 +429,16 @@
 	display:flex;
 	width:150rpx;
 	height:150rpx;
-	margin-right:30rpx;
+	
 	flex-direction:column;
 	justify-content:center;
 	align-items:center;
 	background:#f7f0f0;
 	text-align:center;
 	
+	}
+	.actives{
+		margin-right:30rpx;
 	}
 
   .pos_signer{
