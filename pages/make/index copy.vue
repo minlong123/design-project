@@ -103,24 +103,10 @@
 		<view class="img-panel" @click="cancelselec" v-if="isaction"
 			:style="[{ left: panelleft + 'rpx', top: paneltop + 'rpx', width: panelwidth + 'rpx', height: panelheight + 'rpx',border:panborder }]">
 
-
-			<view 
-			class="photowall-rotate"
-			@touchstart="rotateTouchstart($event)" @touchmove="rotateTouchmove" @touchend="rotateTouchend"
-			>
-
-			<u-image
-			ref="uImage"
-			:lazy-load="true"
-			:src="rotateimg"
-			mode="aspectFill"
-			height="50"
-			width="50"
-			shape="square"
-			>
-			<u-loading-icon size="20" slot="loading"></u-loading-icon>
-			</u-image>
-
+			<view class="img-panel-right" :style="{ top: panelctop + 'rpx'}">
+				<text class="img-rotatesleft" @click.stop="leftrotate">左旋</text>
+				<text class="img-rotates" @click.stop="rightrotate">右旋</text>
+				
 			</view>
 
 
@@ -472,15 +458,7 @@ export default {
 			caendy:0,
 			scalimg:require("../../static/icons/scale.png"),
 			delimg:require("../../static/icons/del.png"),
-			movestartx:0,
-			movestarty:0,
-			moveendx:0,
-			moveendy:0,
 			moveimg:require("../../static/icons/move.png"),
-			rotstartx:0,
-			rotstarty:0,
-			rotendx:0,
-			rotendy:0,
 			rotateimg:require("../../static/icons/rotate.png"),
 
 		}
@@ -525,12 +503,7 @@ export default {
 			})
 		},
 		addsource(){
-			this.actionbox = "";
-			this.isaction = false;
-			this.isphotowall=false;
-
 			this.issedit=true;
-
 		},
 		addsourcein(index){
 			// console.log(index);
@@ -797,65 +770,6 @@ export default {
 				}
 			}).exec();
 		},
-
-		rotateTouchstart(event) {
-			// 长按移动照片墙里面的图片
-			event.stopPropagation()
-			const { clientX, clientY } = event.touches[0];
-			// 记录一些数据
-			this.rotstartx = clientX
-			this.rotstarty = clientY
-			event.preventDefault();
-		},
-		rotateTouchmove(event){
-			event.stopPropagation()
-				const { clientX, clientY } = event.touches[0];
-				this.rotendx=clientX;
-				this.rotendy=clientY;
-
-				// 判断上下左右移动
-				if(clientX - this.rotstartx > 0){
-					// 右边移动
-					this.rightrotate();
-				}
-				if(clientX - this.rotstartx < 0){
-					// 左边移动
-					this.leftrotate();
-				}
-
-				if(clientY - this.rotstarty > 0){
-
-					// 下移动
-					this.rightrotate();
-				}
-
-				if(clientY - this.rotstarty < 0){
-
-					// 上移动
-					this.leftrotate();
-
-				}
-				this.rotstartx=clientX
-				this.rotstarty=clientY
-				// console.log(this.photowall[this.actionbox].scale,"新的缩放系数")
-
-			event.preventDefault();
-		},
-		rotateTouchend(){
-		
-			// 如果只是点击了一下，啥都不干
-			if(this.rotstartx == this.rotendx && this.rotstartx == this.rotendy){
-			
-				this.rotstartx=0;
-				this.rotstarty=0;
-				this.rotendx = 0;
-				this.rotendy = 0;
-				return;
-			}
-		},
-
-
-
 		moveTouchstart(event) {
 			// 长按移动照片墙里面的图片
 			event.stopPropagation()
@@ -866,7 +780,11 @@ export default {
 			event.preventDefault();
 		},
 		moveTouchmove(event){
+
+			// console.log(event);
 			event.stopPropagation()
+
+
 				const { clientX, clientY } = event.touches[0];
 				this.moveendx=clientX;
 				this.moveendy=clientY;
@@ -894,17 +812,20 @@ export default {
 					this.photowall[this.actionbox].centerx = this.photowall[this.actionbox].tranx;
 					this.photowall[this.actionbox].centery = this.photowall[this.actionbox].trany;
 
+
 				}
 
 				if(clientY - this.movestarty < 0){
 
-					// 上移动
-					this.photowall[this.actionbox].trany = this.photowall[this.actionbox].trany - 5;
-					this.photowall[this.actionbox].centerx = this.photowall[this.actionbox].tranx;
-					this.photowall[this.actionbox].centery = this.photowall[this.actionbox].trany;
+			// 上移动
+			this.photowall[this.actionbox].trany = this.photowall[this.actionbox].trany - 5;
+			this.photowall[this.actionbox].centerx = this.photowall[this.actionbox].tranx;
+			this.photowall[this.actionbox].centery = this.photowall[this.actionbox].trany;
 
 
 				}
+
+			
 				this.movestartx=clientX
 				this.movestarty=clientY
 				// console.log(this.photowall[this.actionbox].scale,"新的缩放系数")
@@ -1249,26 +1170,75 @@ export default {
 			}
 
 		},
+		// bigbox() {
+		// 	if(this.paneltype == 1){
+		// 		// 放大盒子
+		// 		this.photowall[this.actionbox].scale = this.photowall[this.actionbox].scale + 0.2;
+
+		// 	}
+		// 	if(this.paneltype == 2){
+		// 		this.allsource[this.currimgindex].width=this.allsource[this.currimgindex].width+10;
+		// 		this.allsource[this.currimgindex].height=this.allsource[this.currimgindex].height+10;
+		// 	}
+		// },
+		// clickbox() {
+		// 	// 缩小盒子
+		// 	if(this.paneltype == 1){
+		// 		this.photowall[this.actionbox].scale = this.photowall[this.actionbox].scale - 0.2;
+		// 	}
+		// 	if(this.paneltype == 2){
+		// 		this.allsource[this.currimgindex].width=this.allsource[this.currimgindex].width-10;
+		// 		this.allsource[this.currimgindex].height=this.allsource[this.currimgindex].height-10;
+		// 	}
+		// },
 		rightrotate() {
 			// 右旋
 			if(this.paneltype == 1){
-				this.photowall[this.actionbox].rotate = this.photowall[this.actionbox].rotate + 5;
+				this.photowall[this.actionbox].rotate = this.photowall[this.actionbox].rotate + 10;
 			}
 			
 			if(this.paneltype == 2){
-				this.allsource[this.currimgindex].rotate=this.allsource[this.currimgindex].rotate+5;
+				this.allsource[this.currimgindex].rotate=this.allsource[this.currimgindex].rotate+10;
 				
 			}
 		},
 		leftrotate() {
 			// 右旋
 			if(this.paneltype == 1){
-				this.photowall[this.actionbox].rotate = this.photowall[this.actionbox].rotate - 5;
+				this.photowall[this.actionbox].rotate = this.photowall[this.actionbox].rotate - 10;
 			}
 			if(this.paneltype == 2){
-				this.allsource[this.currimgindex].rotate=this.allsource[this.currimgindex].rotate-5;
+				this.allsource[this.currimgindex].rotate=this.allsource[this.currimgindex].rotate-10;
 				
 			}	
+		},
+		topmove() {
+			// 上移动
+			this.photowall[this.actionbox].trany = this.photowall[this.actionbox].trany - 5;
+			this.photowall[this.actionbox].centerx = this.photowall[this.actionbox].tranx;
+			this.photowall[this.actionbox].centery = this.photowall[this.actionbox].trany;
+
+		},
+		bottommove() {
+			// 下移动
+			this.photowall[this.actionbox].trany = this.photowall[this.actionbox].trany + 5;
+			this.photowall[this.actionbox].centerx = this.photowall[this.actionbox].tranx;
+			this.photowall[this.actionbox].centery = this.photowall[this.actionbox].trany;
+
+		},
+		leftmove() {
+			// 左移动
+			this.photowall[this.actionbox].tranx = this.photowall[this.actionbox].tranx - 5;
+			this.photowall[this.actionbox].centerx = this.photowall[this.actionbox].tranx;
+			this.photowall[this.actionbox].centery = this.photowall[this.actionbox].trany;
+		
+		},
+		rightmove() {
+			// 右移动
+			this.photowall[this.actionbox].tranx = this.photowall[this.actionbox].tranx + 5;
+			this.photowall[this.actionbox].centerx = this.photowall[this.actionbox].tranx;
+			this.photowall[this.actionbox].centery = this.photowall[this.actionbox].trany;
+		
 		},
 		cancelinput(){
 			this.istext=false;
@@ -1779,9 +1749,6 @@ export default {
 		},
 		exportswall() {
 			this.movemove();
-			this.actionbox = "";
-			this.isaction = false;
-			this.isphotowall=false;
 			this.loadings=true;
 			// this.exportImg();
 			this.exportBigImg();
@@ -2043,11 +2010,6 @@ page {
 	.photowall-move{
 		position: absolute;
 		bottom: -52rpx;
-		right: -62rpx;
-	}
-	.photowall-rotate{
-		position: absolute;
-		top: -52rpx;
 		right: -62rpx;
 	}
 	.img-panel-right {
