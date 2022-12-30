@@ -20,7 +20,7 @@ export default {
 
 // 定义所有字体
 @font-face {font-family:'童话体简';
-    src:url('https://zaiercommon.oss-cn-beijing.aliyuncs.com/TengXiangTongHuaTiJian-2.ttf') format('truetype');
+    src:url('https://zaiercommon.oss-cn-beijing.aliyuncs.com/fonts/TengXiangTongHuaTiJian-2.woff2') format('woff2');
 }
 
 @font-face {font-family:'思源黑体';

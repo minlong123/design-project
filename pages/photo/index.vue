@@ -113,8 +113,8 @@
 		allimg:[],
 		isupload:1,
 		sizeshow:false,
-		columnsdata:[['1寸','2寸','3寸','4寸','5寸']],
-		photosize:"1寸",
+		columnsdata:[['5寸','6寸','7寸','8寸']],
+		photosize:"5寸",
 		phones:"",
 		startupload:false,
 	  }

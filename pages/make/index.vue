@@ -105,8 +105,6 @@
 
 			<view class="img-panel-right" :style="{ top: panelctop + 'rpx'}">
 				<text class="img-close" @click.stop="delbox">删除</text>
-				<text class="img-scale" @click.stop="bigbox">放大</text>
-				<text class="img-scales" @click.stop="clickbox">缩小</text>
 				<text class="img-rotatesleft" @click.stop="leftrotate">左旋</text>
 				<text class="img-rotates" @click.stop="rightrotate">右旋</text>
 				
@@ -118,6 +116,27 @@
 				<text class="img-moveright" @click.stop="rightmove">右移</text>
 				</template>
 			</view>
+
+	
+			<view 
+			class="photowall-scale"
+			@touchstart="scaleTouchstart($event)" @touchmove="scaleTouchmove" @touchend="scaleTouchend"
+			>
+
+			<u-image
+			ref="uImage"
+			:lazy-load="true"
+			:src="scalimg"
+			mode="aspectFill"
+			height="50"
+			width="50"
+			shape="square"
+			>
+			<u-loading-icon size="20" slot="loading"></u-loading-icon>
+			</u-image>
+
+			</view>
+		
 
 		</view>
 
@@ -393,7 +412,14 @@ export default {
 			isotop:0,
 			itendx:0,
 			itendy:0,
-			boximginfo:{}
+			boximginfo:{},
+			caisstart:false,
+			castartx:0,
+			castarty:0,
+			caendx:0,
+			caendy:0,
+			scalimg:require("../../static/icons/scale.png")
+
 		}
 	},
 	onLoad(options) {
@@ -703,6 +729,80 @@ export default {
 				}
 			}).exec();
 		},
+		scaleTouchstart(event) {
+			// 长按拖拽缩放照片墙图片和素材图片
+			// 往左拖是放大，往右拖是缩小，然后拖动了多少距离
+			event.stopPropagation()
+
+			const { clientX, clientY } = event.touches[0];
+			// console.log(event.touches[0]);
+			// 记录一些数据
+			this.castartx = clientX
+			this.castarty = clientY
+			this.caisstart = true;
+
+			event.preventDefault();
+		},
+		scaleTouchmove(event){
+
+			// console.log(event);
+			event.stopPropagation()
+			// 缩放拖拽
+			if (this.caisstart) {
+
+				const { clientX, clientY } = event.touches[0];
+				this.caendx=clientX;
+				this.caendy=clientY;
+				// 判断向左还是向右拖拽
+				// console.log(clientX - this.castartx);
+
+				if(this.paneltype == 1){
+					if(clientX - this.castartx > 0){
+						// 右边缩小
+						this.photowall[this.actionbox].scale = this.photowall[this.actionbox].scale-0.02;
+					}
+					if(clientX - this.castartx < 0){
+						// 左边放大
+						this.photowall[this.actionbox].scale = this.photowall[this.actionbox].scale + 0.02;
+					}
+				}
+
+				if(this.paneltype == 2){
+					if(clientX - this.castartx > 0){
+						// 右边缩小
+						this.allsource[this.currimgindex].width=this.allsource[this.currimgindex].width-10;
+						this.allsource[this.currimgindex].height=this.allsource[this.currimgindex].height-10;
+					}
+					if(clientX - this.castartx < 0){
+						// 左边放大
+						this.allsource[this.currimgindex].width=this.allsource[this.currimgindex].width+10;
+						this.allsource[this.currimgindex].height=this.allsource[this.currimgindex].height+10;
+					}
+				}
+
+				this.castartx=clientX
+				// console.log(this.photowall[this.actionbox].scale,"新的缩放系数")
+
+			}
+			event.preventDefault();
+		},
+		scaleTouchend(){
+		
+			// 如果只是点击了一下，啥都不干
+			if(this.castartx == this.caendx && this.castarty == this.caendy){
+			
+				this.castartx=0;
+				this.castarty=0;
+				this.caisstart = false;
+				this.caendx = 0;
+				this.caendy = 0;
+				return;
+			}
+
+
+
+
+		},
 		textTouchstart(event, index) {
 	
 			event.stopPropagation()
@@ -955,27 +1055,27 @@ export default {
 			}
 
 		},
-		bigbox() {
-			if(this.paneltype == 1){
-				// 放大盒子
-				this.photowall[this.actionbox].scale = this.photowall[this.actionbox].scale + 0.2;
+		// bigbox() {
+		// 	if(this.paneltype == 1){
+		// 		// 放大盒子
+		// 		this.photowall[this.actionbox].scale = this.photowall[this.actionbox].scale + 0.2;
 
-			}
-			if(this.paneltype == 2){
-				this.allsource[this.currimgindex].width=this.allsource[this.currimgindex].width+10;
-				this.allsource[this.currimgindex].height=this.allsource[this.currimgindex].height+10;
-			}
-		},
-		clickbox() {
-			// 缩小盒子
-			if(this.paneltype == 1){
-				this.photowall[this.actionbox].scale = this.photowall[this.actionbox].scale - 0.2;
-			}
-			if(this.paneltype == 2){
-				this.allsource[this.currimgindex].width=this.allsource[this.currimgindex].width-10;
-				this.allsource[this.currimgindex].height=this.allsource[this.currimgindex].height-10;
-			}
-		},
+		// 	}
+		// 	if(this.paneltype == 2){
+		// 		this.allsource[this.currimgindex].width=this.allsource[this.currimgindex].width+10;
+		// 		this.allsource[this.currimgindex].height=this.allsource[this.currimgindex].height+10;
+		// 	}
+		// },
+		// clickbox() {
+		// 	// 缩小盒子
+		// 	if(this.paneltype == 1){
+		// 		this.photowall[this.actionbox].scale = this.photowall[this.actionbox].scale - 0.2;
+		// 	}
+		// 	if(this.paneltype == 2){
+		// 		this.allsource[this.currimgindex].width=this.allsource[this.currimgindex].width-10;
+		// 		this.allsource[this.currimgindex].height=this.allsource[this.currimgindex].height-10;
+		// 	}
+		// },
 		rightrotate() {
 			// 右旋
 			if(this.paneltype == 1){
@@ -1093,7 +1193,7 @@ export default {
 				this.paneltop = this.allsource[index].top;
 				this.panelwidth = this.allsource[index].width;
 				this.panelheight = this.allsource[index].height;
-				this.panelctop = -150;
+				this.panelctop = -82;
 				this.paneltype=2;
 				this.panborder="none"
 
@@ -1120,7 +1220,7 @@ export default {
 					this.paneltop = this.photowall[index].top;
 					this.panelwidth = this.photowall[index].width;
 					this.panelheight = this.photowall[index].height;
-					this.panelctop = -343;
+					this.panelctop = -204;
 					this.paneltype=1;
 					this.actionbox = index;//当前选中的活动盒子
 					this.panborder="2px dashed red"
@@ -1676,7 +1776,7 @@ page {
 		.make-text{
 			position: absolute;
 			overflow: hidden;
-			transition: all ease 0.2s;
+			// transition: all ease 0.002s;
 			border: 2px dashed #e3e1e5;
 			white-space: pre;
     		transform-origin: 0 0 0;
@@ -1687,7 +1787,7 @@ page {
 		.make-source{
 			position: absolute;
 			overflow: hidden;
-			transition: all ease 0.02s;
+			// transition: all ease 0.02s;
 			border: 2px dashed #e3e1e5;
     		transform-origin: 0 0 0;
 			box-sizing:border-box;
@@ -1780,10 +1880,14 @@ page {
 	box-sizing: border-box;
 	color: red;
 	transition: all ease 0.2s;
-
+	.photowall-scale{
+		position: absolute;
+		top: -30rpx;
+		left: -80rpx;
+	}
 	.img-panel-right {
 		position: absolute;
-		top: -300rpx;
+		top: -250rpx;
 		right: -80rpx;
 		display: flex;
 		flex-direction: column;
