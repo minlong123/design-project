@@ -346,6 +346,7 @@
 
 		</view>
 
+
 	</view>
 </template>
 
@@ -422,6 +423,7 @@ export default {
 			],
 			colors:[],
 			photowall:[],
+			oldphotowall:[],
 			isupload: true,
 			canvas: "",
 			canvaswidth: 750,
@@ -482,7 +484,6 @@ export default {
 			rotendx:0,
 			rotendy:0,
 			rotateimg:require("../../static/icons/rotate.png"),
-
 		}
 	},
 	onLoad(options) {
@@ -521,6 +522,7 @@ export default {
 					that.allsourcate=res.data['catename']
 					that.allsourceimg=res.data['allimg'];
 					that.photowall=res.data['photowall'];
+					that.oldphotowall=res.data['oldphoto'];
 				}
 			})
 		},
@@ -1085,6 +1087,7 @@ export default {
 			this.actionbox = "";
 			this.isaction = false;
 			this.isphotowall=false;
+			this.noPullDown();
 			event.stopPropagation()
 			// 没有图片的话不触发
 			if(!this.photowall[index].img){
@@ -1117,6 +1120,8 @@ export default {
 				this.endy=clientY;
 				this.photowall[this.currdropbox].left = this.soleft + ((clientX - this.startx)/(uni.upx2px(100)/100))
 				this.photowall[this.currdropbox].top = this.sotop + ((clientY - this.starty)/(uni.upx2px(100)/100))
+				
+				// 由于拖拽的时候，微信浏览器整体也跟着下滑，导致Touchend被微信浏览器拦截未执行，所以会导致照片墙拖拽的时候错位
 
 			}
 
@@ -1148,7 +1153,9 @@ export default {
 
 				// 如果只是点击了一下，啥都不干
 				if(this.startx == this.endx && this.starty == this.endy){
-				
+
+					this.photowall[this.currdropbox].left=this.soleft
+					this.photowall[this.currdropbox].top=this.sotop
 					this.startx=0;
 					this.starty=0;
 					this.isstart = false;
@@ -1173,6 +1180,7 @@ export default {
 							boxsize=currsize;
 							maxdom=i;
 							tocutag=true;
+							break;
 						}
 
 					}
@@ -1213,15 +1221,37 @@ export default {
 
 				}
 
-				// 所有变量初始化
-				this.startx=0;
-				this.starty=0;
-				this.isstart = false;
-				this.soleft = 0;
-				this.sotop = 0;
-				this.currdropbox=""
-				this.endx = 0;
-				this.endy = 0;
+				// 解决部分手机的微信浏览器无法禁用下滑，需要判断当前拖拽的照片墙的left和top是否在正确的位置上
+				var that=this;
+				setTimeout(function(){
+
+					let iserr=false;
+					for(let i=0;i<that.oldphotowall.length;i++){
+
+						if(that.oldphotowall[i].left == that.photowall[that.currdropbox].left && that.oldphotowall[i].top == that.photowall[that.currdropbox].top){
+							iserr=true;
+							break;
+						}
+					}
+					if(!iserr){
+						that.photowall[that.currdropbox].left=that.oldphotowall[that.currdropbox].left
+						that.photowall[that.currdropbox].top=that.oldphotowall[that.currdropbox].top
+					}
+
+					// 所有变量初始化
+					that.startx=0;
+					that.starty=0;
+					that.isstart = false;
+					that.soleft = 0;
+					that.sotop = 0;
+					that.currdropbox=""
+					that.endx = 0;
+					that.endy = 0;
+				})
+
+				
+
+
 			}
 
 
