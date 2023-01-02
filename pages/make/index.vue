@@ -1,11 +1,9 @@
 <template>
-	<view class="make">
+	<view class="make" :class="{'scollmake':issshow}">
 
 		<u-loading-page loading-text="正在制作中..." :loading="loadings"></u-loading-page>
 
 		<u-loading-page loading-text="正在提交中..." :loading="subloading"></u-loading-page>
-
-
 		<view v-if="!isexport">
 
 			<view class="make-con">
@@ -394,10 +392,8 @@ export default {
 			allsourcate:[],
 			familays:[
 				'宋体',
-				'幼圆体',
 				'思源黑体',
 				'童话体简',
-				'浮沉繁花',
 				'花落寄相思',
 				'华康金文体',
 				'华康勘亭流',
@@ -484,6 +480,7 @@ export default {
 			rotendx:0,
 			rotendy:0,
 			rotateimg:require("../../static/icons/rotate.png"),
+			issshow:false,
 		}
 	},
 	onLoad(options) {
@@ -530,8 +527,8 @@ export default {
 			this.actionbox = "";
 			this.isaction = false;
 			this.isphotowall=false;
-
 			this.issedit=true;
+			this.issshow=true;
 
 		},
 		addsourcein(index){
@@ -740,6 +737,8 @@ export default {
 			// 关闭素材的添加
 			this.issedit=false;
 			this.selectsour=0;
+			this.noPullDown();
+			this.issshow=false;
 		},
 		selectfontset(type,val=""){
 			// 字体设置方法
@@ -2132,7 +2131,7 @@ page {
 }
 .text-edit{
 	.text-model{
-		position:absolute;
+		position:fixed;
 		top:0;
 		left:0;
 		z-index:99999999;
@@ -2373,5 +2372,7 @@ page {
     color: #666666;
     font-size: 28rpx;
 }
-
+.scollmake{
+	position:fixed;
+}
 </style>

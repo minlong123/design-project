@@ -22,11 +22,29 @@
 	<u-button @click="visits()">如何操作？</u-button>
 	</view>
 
+
+	<view class="photo-wall">
+
+		<view class="photo-row" @click="makephoto(item.id,item.name)" v-for="(item,index) in datas" :key="index">
+				<u-image
+			ref="uImage"
+			:lazy-load="true"
+			:src="item.picimage"
+			mode="aspectFill"
+			height="210"
+			width="210"
+			shape="square"
+			>
+			<u-loading-icon size="20" slot="loading"></u-loading-icon>
+			</u-image>
+			<text>{{item.name}}</text>
+		</view>
+
+	</view>
+
 	<text class="preloadfont">字</text>
 <text class="preloadfonts">字</text>
 <text class="preloadfont1">字</text>
-<text class="preloadfont2">字</text>
-<text class="preloadfont3">字</text>
 <text class="preloadfont5">字</text>
 <text class="preloadfont6">字</text>
 <text class="preloadfont7">字</text>
@@ -49,24 +67,7 @@
 <text class="preloadfont24">字</text>
 <text class="preloadfont25">字</text>
 <text class="preloadfont26">字</text>
-	<view class="photo-wall">
 
-		<view class="photo-row" @click="makephoto(item.id,item.name)" v-for="(item,index) in datas" :key="index">
-				<u-image
-			ref="uImage"
-			:lazy-load="true"
-			:src="item.picimage"
-			mode="aspectFill"
-			height="210"
-			width="210"
-			shape="square"
-			>
-			<u-loading-icon size="20" slot="loading"></u-loading-icon>
-			</u-image>
-			<text>{{item.name}}</text>
-		</view>
-
-	</view>
 
 	<u-loading-page loading-text="正在加载中..." :loading="loading"></u-loading-page>
 
@@ -194,18 +195,18 @@ page {
 	position:absolute;
 	top:0;
 }
-.preloadfont2{
-	font-family:'幼圆体';
-	position:absolute;
-	top:0;
-}
+// .preloadfont2{
+// 	font-family:'幼圆体';
+// 	position:absolute;
+// 	top:0;
+// }
 
 
-.preloadfont3{
-	font-family:'浮沉繁花';
-	position:absolute;
-	top:0;
-}
+// .preloadfont3{
+// 	font-family:'浮沉繁花';
+// 	position:absolute;
+// 	top:0;
+// }
 .preloadfont5{
 	font-family:'花落寄相思';
 	position:absolute;
